@@ -2,16 +2,17 @@ package com.example.service;
 
 import com.example.model.Trainer;
 import com.example.repo.TrainerRepository;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class TrainerService implements CrudService<Trainer> {
 
-    TrainerRepository repository;
+    private TrainerRepository repository;
 
     @Autowired
     public TrainerService(TrainerRepository trainerRepository) {
@@ -25,11 +26,21 @@ public class TrainerService implements CrudService<Trainer> {
 
     @Override
     public Trainer create(Trainer trainer) {
-        return null;
+        repository.findAll().put((long) trainer.getId(), trainer);
+        return get(trainer.getId());
     }
 
     @Override
-    public Optional<Trainer> get(int id) {
-        return Optional.empty();
+    public Trainer get(int id) {
+        return repository.findAll().get((long) id);
+    }
+
+    public Trainer update(Trainer trainer) throws IOException, ParseException {
+        if (get(trainer.getId()) != null) {
+            repository.findAll().replace((long)trainer.getId(), trainer);
+        } else {
+            return null;
+        }
+        return get(trainer.getId());
     }
 }

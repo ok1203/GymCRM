@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class TraineeService implements CrudService<Trainee> {
@@ -26,12 +25,26 @@ public class TraineeService implements CrudService<Trainee> {
     }
 
     @Override
-    public Trainee create(Trainee trainee) {
-        return null;
+    public Trainee create(Trainee trainee) throws IOException, ParseException {
+        repository.findAll().put((long) trainee.getId(), trainee);
+        return get(trainee.getId());
     }
 
     @Override
-    public Optional<Trainee> get(int id) {
-        return Optional.empty();
+    public Trainee get(int id) throws IOException, ParseException {
+        return repository.findAll().get((long) id);
+    }
+
+    public void delete(int id) throws IOException, ParseException {
+        repository.findAll().remove((long) id);
+    }
+
+    public Trainee update(Trainee trainee) throws IOException, ParseException {
+        if (get(trainee.getId()) != null) {
+            repository.findAll().replace((long)trainee.getId(), trainee);
+        } else {
+            return null;
+        }
+        return get(trainee.getId());
     }
 }

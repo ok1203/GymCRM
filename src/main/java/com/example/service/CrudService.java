@@ -11,9 +11,9 @@ public interface CrudService<T> {
 
     Map<Long, T> list() throws IOException, ParseException;
 
-    T create(T t);
+    T create(T t) throws IOException, ParseException;
 
-    Optional<T> get(int id);
+    T get(int id) throws IOException, ParseException;
 
 
 }

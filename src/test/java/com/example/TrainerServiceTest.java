@@ -1,6 +1,5 @@
 package com.example;
 
-import com.example.config.AppConfig;
 import com.example.model.Trainer;
 import com.example.repo.TrainerRepository;
 import com.example.service.TrainerService;
@@ -9,8 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TrainerTest {
+public class TrainerServiceTest {
 
     @Mock
     private Trainer trainer;

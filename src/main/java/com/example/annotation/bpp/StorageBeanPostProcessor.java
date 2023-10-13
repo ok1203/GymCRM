@@ -16,6 +16,19 @@ import java.util.Arrays;
 @Component
 public class StorageBeanPostProcessor implements BeanPostProcessor {
     private static final Logger log = LoggerFactory.getLogger(StorageBeanPostProcessor.class);
+    private static StorageComponent storageComponent = null;
+
+    static {
+        try {
+            storageComponent = new StorageComponent();
+        } catch (IOException e) {
+            log.error("IOExeption caught, cannot operate file");
+            e.printStackTrace();
+        } catch (ParseException e) {
+            log.error("unexpected condition or unknown error");
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -25,16 +38,7 @@ public class StorageBeanPostProcessor implements BeanPostProcessor {
                 .filter(field -> field.isAnnotationPresent(Storage.class)) // check if each of fields annotated with @InjectRandomEntity
                 .forEach(field -> {
                     field.setAccessible(true); // make the field accessible to set a value
-                    try {
-                        ReflectionUtils.setField(field, bean, new StorageComponent()); // set the value in the object
-                    } catch (IOException e) {
-                        log.error("IOExeption caught, cannot operate file");
-                        e.printStackTrace();
-                    } catch (ParseException e) {
-                        log.error("unexpected condition or unknown error");
-                        e.printStackTrace();
-                    }
-
+                    ReflectionUtils.setField(field, bean, storageComponent); // set the value in the object
                 });
         return bean;
     }

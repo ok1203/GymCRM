@@ -1,6 +1,5 @@
 package com.example;
 
-import com.example.config.AppConfig;
 import com.example.model.User;
 import com.example.repo.UserRepository;
 import com.example.service.UserService;
@@ -20,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UserTest {
+public class UserServiceTest {
 
     @Mock
     private User user;
