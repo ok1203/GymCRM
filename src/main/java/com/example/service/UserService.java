@@ -4,10 +4,12 @@ import com.example.model.User;
 import com.example.repo.UserRepository;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
 
+@Service
 public class UserService implements CrudService<User> {
 
     private UserRepository repository;

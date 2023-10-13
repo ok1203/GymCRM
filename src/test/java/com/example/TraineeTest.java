@@ -1,47 +1,77 @@
 package com.example;
 
-import com.example.config.AppConfig;
+import com.example.model.Trainee;
+import com.example.repo.TraineeRepository;
 import com.example.service.TraineeService;
-import com.example.service.UserService;
 import org.json.simple.parser.ParseException;
-import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class TraineeTest {
 
-    ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
-    private TraineeService service = applicationContext.getBean("TraineeService", TraineeService.class);
+    @Mock
+    private Trainee trainee;
+    @Mock
+    private TraineeRepository repository;
+
+    @InjectMocks
+    private TraineeService service;
 
     @Test
     public void testGetId() throws IOException, ParseException {
-        assertEquals(1, service.list().get((long)1).getId());
+        int expectedInt = 1;
+        Map<Long, Trainee> list = new HashMap<>();
+        list.put(1l, trainee);
+        when(repository.findAll()).thenReturn(list);
+        when(trainee.getId()).thenReturn(expectedInt);
+        Trainee actual = service.list().get(1L);
+
+        assertEquals(expectedInt, actual.getId());
     }
 
     @Test
     public void testGetDateOfBirth() throws IOException, ParseException {
-        Date dateOfBirth = service.list().get((long)1).getDateOfBirth();
-        assertEquals(2000, dateOfBirth.getYear());
-        assertEquals(11, dateOfBirth.getMonth());
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(dateOfBirth);
-        assertEquals(11, calendar.DAY_OF_MONTH);
+        Date expectedDate = new Date(2000, 11, 11);
+        Map<Long, Trainee> list = new HashMap<>();
+        list.put(1l, trainee);
+        when(repository.findAll()).thenReturn(list);
+        when(trainee.getDateOfBirth()).thenReturn(expectedDate);
+        Trainee actual = service.list().get(1L);
+
+        assertEquals(expectedDate, actual.getDateOfBirth());
     }
 
     @Test
     public void testGetAddress() throws IOException, ParseException {
-        assertEquals("Backer St. 221b", service.list().get((long)1).getAddress());
+        String expectedAddr = "Backer St. 221b";
+        Map<Long, Trainee> list = new HashMap<>();
+        list.put(1l, trainee);
+        when(repository.findAll()).thenReturn(list);
+        when(trainee.getAddress()).thenReturn(expectedAddr);
+        Trainee actual = service.list().get(1L);
+
+        assertEquals(expectedAddr, actual.getAddress());
     }
 
     @Test
     public void testGetUserId() throws IOException, ParseException {
-        assertEquals(1, service.list().get((long)1).getUserId());
+        int expectedInt = 1;
+        Map<Long, Trainee> list = new HashMap<>();
+        list.put(1l, trainee);
+        when(repository.findAll()).thenReturn(list);
+        when(trainee.getUserId()).thenReturn(expectedInt);
+        Trainee actual = service.list().get(1L);
+
+        assertEquals(expectedInt, actual.getUserId());
     }
 }

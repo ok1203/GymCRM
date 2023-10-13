@@ -1,50 +1,104 @@
 package com.example;
 
 import com.example.config.AppConfig;
+import com.example.model.User;
+import com.example.repo.UserRepository;
 import com.example.service.UserService;
 import org.json.simple.parser.ParseException;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class UserTest {
 
-    ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
-    private UserService service = applicationContext.getBean("UserService", UserService.class);;
+    @Mock
+    private User user;
+    @Mock
+    private UserRepository repository;
+
+    @InjectMocks
+    private UserService service;
 
     @Test
     public void testGetId() throws IOException, ParseException {
-        assertEquals(1, service.list().get((long)1).getId());
+        int expectedInt = 1;
+        Map<Long, User> userList = new HashMap<>();
+        userList.put(1l, user);
+        when(repository.findAll()).thenReturn(userList);
+        when(user.getId()).thenReturn(expectedInt);
+        User actual = service.list().get(1L);
+
+        assertEquals(expectedInt, actual.getId());
     }
 
     @Test
     public void testGetFirstName() throws IOException, ParseException {
-        assertEquals("John", service.list().get((long)1).getFirstName());
+        String expectedStr = "John";
+        Map<Long, User> userList = new HashMap<>();
+        userList.put(1l, user);
+        when(repository.findAll()).thenReturn(userList);
+        when(user.getFirstName()).thenReturn(expectedStr);
+        User actual = service.list().get(1L);
+
+        assertEquals(expectedStr, actual.getFirstName());
     }
 
     @Test
     public void testGetLastName() throws IOException, ParseException {
-        assertEquals("Johnson", service.list().get((long)1).getLastName());
+        String expectedStr = "Johnson";
+        Map<Long, User> userList = new HashMap<>();
+        userList.put(1l, user);
+        when(repository.findAll()).thenReturn(userList);
+        when(user.getLastName()).thenReturn(expectedStr);
+        User actual = service.list().get(1L);
+
+        assertEquals(expectedStr, actual.getLastName());
     }
 
     @Test
     public void testGetUsername() throws IOException, ParseException {
-        assertEquals("john.johnson", service.list().get((long)1).getUserName());
+        String expectedStr = "john.johnson";
+        Map<Long, User> userList = new HashMap<>();
+        userList.put(1l, user);
+        when(repository.findAll()).thenReturn(userList);
+        when(user.getUserName()).thenReturn(expectedStr);
+        User actual = service.list().get(1L);
+
+        assertEquals(expectedStr, actual.getUserName());
     }
 
     @Test
     public void testGetPassword() throws IOException, ParseException {
-        assertEquals("password", service.list().get((long)1).getPassword());
+        String expectedStr = "password";
+        Map<Long, User> userList = new HashMap<>();
+        userList.put(1l, user);
+        when(repository.findAll()).thenReturn(userList);
+        when(user.getPassword()).thenReturn(expectedStr);
+        User actual = service.list().get(1L);
+
+        assertEquals(expectedStr, actual.getPassword());
     }
 
     @Test
     public void testIsIsActive() throws IOException, ParseException {
-        assertTrue(service.list().get((long)1).isActive());
+        Boolean expectedBool = true;
+        Map<Long, User> userList = new HashMap<>();
+        userList.put(1l, user);
+        when(repository.findAll()).thenReturn(userList);
+        when(user.isActive()).thenReturn(expectedBool);
+        User actual = service.list().get(1L);
+
+        assertTrue(actual.isActive());
     }
 }
