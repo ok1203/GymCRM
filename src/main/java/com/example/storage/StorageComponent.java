@@ -78,7 +78,7 @@ public class StorageComponent {
 
     public Trainer trainerUpdate(Trainer trainer) {
         if (!trainerStorage.containsKey(trainer.getId())) {
-            trainerStorage.replace(trainer.getId(), trainer);
+            throw new NullPointerException("Does not contain such object");
         }
         trainerStorage.replace(trainer.getId(), trainer);
         return trainer;
