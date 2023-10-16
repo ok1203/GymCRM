@@ -19,7 +19,7 @@ public class TrainingTypeService implements CrudService<TrainingType> {
     }
 
     @Override
-    public Map<Long, TrainingType> list() {
+    public Map<Integer, TrainingType> list() {
         return repository.findAll();
     }
 

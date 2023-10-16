@@ -32,8 +32,8 @@ public class UserServiceTest {
     @Test
     public void testGetId() throws IOException, ParseException {
         int expectedInt = 1;
-        Map<Long, User> userList = new HashMap<>();
-        userList.put(1l, user);
+        Map<Integer, User> userList = new HashMap<>();
+        userList.put(1, user);
         when(repository.findAll()).thenReturn(userList);
         when(user.getId()).thenReturn(expectedInt);
         User actual = service.list().get(1L);
@@ -44,8 +44,8 @@ public class UserServiceTest {
     @Test
     public void testGetFirstName() throws IOException, ParseException {
         String expectedStr = "John";
-        Map<Long, User> userList = new HashMap<>();
-        userList.put(1l, user);
+        Map<Integer, User> userList = new HashMap<>();
+        userList.put(1, user);
         when(repository.findAll()).thenReturn(userList);
         when(user.getFirstName()).thenReturn(expectedStr);
         User actual = service.list().get(1L);
@@ -56,8 +56,8 @@ public class UserServiceTest {
     @Test
     public void testGetLastName() throws IOException, ParseException {
         String expectedStr = "Johnson";
-        Map<Long, User> userList = new HashMap<>();
-        userList.put(1l, user);
+        Map<Integer, User> userList = new HashMap<>();
+        userList.put(1, user);
         when(repository.findAll()).thenReturn(userList);
         when(user.getLastName()).thenReturn(expectedStr);
         User actual = service.list().get(1L);
@@ -68,8 +68,8 @@ public class UserServiceTest {
     @Test
     public void testGetUsername() throws IOException, ParseException {
         String expectedStr = "john.johnson";
-        Map<Long, User> userList = new HashMap<>();
-        userList.put(1l, user);
+        Map<Integer, User> userList = new HashMap<>();
+        userList.put(1, user);
         when(repository.findAll()).thenReturn(userList);
         when(user.getUserName()).thenReturn(expectedStr);
         User actual = service.list().get(1L);
@@ -80,8 +80,8 @@ public class UserServiceTest {
     @Test
     public void testGetPassword() throws IOException, ParseException {
         String expectedStr = "password";
-        Map<Long, User> userList = new HashMap<>();
-        userList.put(1l, user);
+        Map<Integer, User> userList = new HashMap<>();
+        userList.put(1, user);
         when(repository.findAll()).thenReturn(userList);
         when(user.getPassword()).thenReturn(expectedStr);
         User actual = service.list().get(1L);
@@ -92,8 +92,8 @@ public class UserServiceTest {
     @Test
     public void testIsIsActive() throws IOException, ParseException {
         Boolean expectedBool = true;
-        Map<Long, User> userList = new HashMap<>();
-        userList.put(1l, user);
+        Map<Integer, User> userList = new HashMap<>();
+        userList.put(1, user);
         when(repository.findAll()).thenReturn(userList);
         when(user.isActive()).thenReturn(expectedBool);
         User actual = service.list().get(1L);

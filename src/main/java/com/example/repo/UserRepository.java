@@ -1,6 +1,5 @@
 package com.example.repo;
 
-import com.example.annotation.Storage;
 import com.example.model.User;
 import com.example.storage.StorageComponent;
 import org.json.simple.parser.ParseException;
@@ -17,7 +16,7 @@ public class UserRepository implements CrudRepository<User> {
     private StorageComponent storageComponent;
 
     @Override
-    public Map<Long, User> findAll() throws IOException, ParseException {
+    public Map<Integer, User> findAll() throws IOException, ParseException {
         return storageComponent.getUsersMap();
     }
 }

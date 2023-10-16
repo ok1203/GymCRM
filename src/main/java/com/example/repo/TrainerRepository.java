@@ -1,12 +1,12 @@
 package com.example.repo;
 
-import com.example.annotation.Storage;
 import com.example.model.Trainer;
 import com.example.storage.StorageComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class TrainerRepository implements CrudRepository<Trainer> {
@@ -15,7 +15,7 @@ public class TrainerRepository implements CrudRepository<Trainer> {
     private StorageComponent storageComponent;
 
     @Override
-    public Map<Long, Trainer> findAll() {
+    public Map<Integer, Trainer> findAll() {
         return storageComponent.getTrainerMap();
     }
 
@@ -24,7 +24,7 @@ public class TrainerRepository implements CrudRepository<Trainer> {
         return trainer;
     }
 
-    public Trainer get(int id) {
+    public Optional<Trainer> get(int id) {
         return storageComponent.getTrainer(id);
     }
 

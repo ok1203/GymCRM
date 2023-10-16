@@ -30,8 +30,8 @@ public class TraineeServiceTest {
     @Test
     public void testGetId() throws IOException, ParseException {
         int expectedInt = 1;
-        Map<Long, Trainee> list = new HashMap<>();
-        list.put(1l, trainee);
+        Map<Integer, Trainee> list = new HashMap<>();
+        list.put(1, trainee);
         when(repository.findAll()).thenReturn(list);
         when(trainee.getId()).thenReturn(expectedInt);
         Trainee actual = service.list().get(1L);
@@ -42,8 +42,8 @@ public class TraineeServiceTest {
     @Test
     public void testGetDateOfBirth() throws IOException, ParseException {
         Date expectedDate = new Date(2000, 11, 11);
-        Map<Long, Trainee> list = new HashMap<>();
-        list.put(1l, trainee);
+        Map<Integer, Trainee> list = new HashMap<>();
+        list.put(1, trainee);
         when(repository.findAll()).thenReturn(list);
         when(trainee.getDateOfBirth()).thenReturn(expectedDate);
         Trainee actual = service.list().get(1L);
@@ -54,8 +54,8 @@ public class TraineeServiceTest {
     @Test
     public void testGetAddress() throws IOException, ParseException {
         String expectedAddr = "Backer St. 221b";
-        Map<Long, Trainee> list = new HashMap<>();
-        list.put(1l, trainee);
+        Map<Integer, Trainee> list = new HashMap<>();
+        list.put(1, trainee);
         when(repository.findAll()).thenReturn(list);
         when(trainee.getAddress()).thenReturn(expectedAddr);
         Trainee actual = service.list().get(1L);
@@ -66,8 +66,8 @@ public class TraineeServiceTest {
     @Test
     public void testGetUserId() throws IOException, ParseException {
         int expectedInt = 1;
-        Map<Long, Trainee> list = new HashMap<>();
-        list.put(1l, trainee);
+        Map<Integer, Trainee> list = new HashMap<>();
+        list.put(1, trainee);
         when(repository.findAll()).thenReturn(list);
         when(trainee.getUserId()).thenReturn(expectedInt);
         Trainee actual = service.list().get(1L);

@@ -1,6 +1,5 @@
 package com.example.repo;
 
-import com.example.annotation.Storage;
 import com.example.model.Trainee;
 import com.example.storage.StorageComponent;
 import org.json.simple.parser.ParseException;
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class TraineeRepository implements CrudRepository<Trainee> {
@@ -17,7 +17,7 @@ public class TraineeRepository implements CrudRepository<Trainee> {
     private StorageComponent storageComponent;
 
     @Override
-    public Map<Long, Trainee> findAll() throws IOException, ParseException {
+    public Map<Integer, Trainee> findAll() throws IOException, ParseException {
         return storageComponent.getTraineeMap();
     }
 
@@ -25,7 +25,7 @@ public class TraineeRepository implements CrudRepository<Trainee> {
         return storageComponent.createTrainee(trainee);
     }
 
-    public Trainee get(int id) {
+    public Optional<Trainee> get(int id) {
         return storageComponent.getTrainee(id);
     }
 

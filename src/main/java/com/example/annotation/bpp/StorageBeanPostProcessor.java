@@ -55,7 +55,7 @@ public class StorageBeanPostProcessor implements BeanPostProcessor {
                         case "trainers":
                             ReflectionUtils.setField(field, bean, trainerStorage);
                             break;
-                        case "trainigs":
+                        case "trainings":
                             ReflectionUtils.setField(field, bean, trainingStorage);
                             break;
                         case "training-types":
@@ -81,7 +81,6 @@ public class StorageBeanPostProcessor implements BeanPostProcessor {
                 log.info("JSON file loaded successfully.");
             } catch (IOException | ParseException e) {
                 log.error("Error loading or parsing the JSON file: " + e.getMessage());
-                e.printStackTrace();
             }
         }
 

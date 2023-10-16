@@ -20,7 +20,7 @@ public class UserService implements CrudService<User> {
     }
 
     @Override
-    public Map<Long, User> list() throws IOException, ParseException {
+    public Map<Integer, User> list() throws IOException, ParseException {
         return repository.findAll();
     }
 

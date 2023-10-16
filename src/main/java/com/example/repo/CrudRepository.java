@@ -8,6 +8,6 @@ import java.util.Map;
 
 public interface CrudRepository<T> {
 
-    Map<Long, T> findAll() throws IOException, ParseException;
+    Map<Integer, T> findAll() throws IOException, ParseException;
 
 }

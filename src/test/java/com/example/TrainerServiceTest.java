@@ -29,8 +29,8 @@ public class TrainerServiceTest {
     @Test
     public void testGetId() {
         int expectedInt = 1;
-        Map<Long, Trainer> list = new HashMap<>();
-        list.put(1l, trainer);
+        Map<Integer, Trainer> list = new HashMap<>();
+        list.put(1, trainer);
         when(repository.findAll()).thenReturn(list);
         when(trainer.getId()).thenReturn(expectedInt);
         Trainer actual = service.list().get(1L);
@@ -41,8 +41,8 @@ public class TrainerServiceTest {
     @Test
     public void testGetSpecializationId() {
         int expectedInt = 1;
-        Map<Long, Trainer> list = new HashMap<>();
-        list.put(1l, trainer);
+        Map<Integer, Trainer> list = new HashMap<>();
+        list.put(1, trainer);
         when(repository.findAll()).thenReturn(list);
         when(trainer.getSpecializationId()).thenReturn(expectedInt);
         Trainer actual = service.list().get(1L);
@@ -53,8 +53,8 @@ public class TrainerServiceTest {
     @Test
     public void testGetUserId() {
         int expectedInt = 1;
-        Map<Long, Trainer> list = new HashMap<>();
-        list.put(1l, trainer);
+        Map<Integer, Trainer> list = new HashMap<>();
+        list.put(1, trainer);
         when(repository.findAll()).thenReturn(list);
         when(trainer.getUserId()).thenReturn(expectedInt);
         Trainer actual = service.list().get(1L);

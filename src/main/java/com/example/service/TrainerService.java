@@ -2,11 +2,9 @@ package com.example.service;
 
 import com.example.model.Trainer;
 import com.example.repo.TrainerRepository;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -21,7 +19,7 @@ public class TrainerService implements CrudService<Trainer> {
     }
 
     @Override
-    public Map<Long, Trainer> list() {
+    public Map<Integer, Trainer> list() {
         return repository.findAll();
     }
 
@@ -33,10 +31,13 @@ public class TrainerService implements CrudService<Trainer> {
 
     @Override
     public Optional<Trainer> get(int id) {
-        return Optional.ofNullable(repository.get(id));
+        return repository.get(id);
     }
 
     public Trainer update(Trainer trainer) {
+        if (get(trainer.getId()).isEmpty()) {
+            throw new NullPointerException("Trainer is null");
+        }
         return repository.update(trainer);
     }
 }

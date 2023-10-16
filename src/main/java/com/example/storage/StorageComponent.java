@@ -5,81 +5,80 @@ import com.example.model.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class StorageComponent {
 
     @Storage(entity = "users")
-    private Map<Long, User> userStorage;
+    private Map<Integer, User> userStorage;
     @Storage(entity = "trainees")
-    private Map<Long, Trainee> traineeStorage;
+    private Map<Integer, Trainee> traineeStorage;
     @Storage(entity = "trainers")
-    private Map<Long, Trainer> trainerStorage;
+    private Map<Integer, Trainer> trainerStorage;
     @Storage(entity = "trainings")
-    private Map<Long, Training> trainingStorage;
+    private Map<Integer, Training> trainingStorage;
     @Storage(entity = "training-types")
-    private Map<Long, TrainingType> trainingTypeStorage;
+    private Map<Integer, TrainingType> trainingTypeStorage;
 
-    public Map<Long, User> getUsersMap() {
+    public Map<Integer, User> getUsersMap() {
         return userStorage;
     }
 
-    public Map<Long, Trainee> getTraineeMap() {
+    public Map<Integer, Trainee> getTraineeMap() {
         return traineeStorage;
     }
 
-    public Map<Long, Trainer> getTrainerMap() {
+    public Map<Integer, Trainer> getTrainerMap() {
         return trainerStorage;
     }
 
-    public Map<Long, Training> getTrainingMap() {
+    public Map<Integer, Training> getTrainingMap() {
         return trainingStorage;
     }
 
-    public Map<Long, TrainingType> getTrainingTypeMap() {
+    public Map<Integer, TrainingType> getTrainingTypeMap() {
         return trainingTypeStorage;
     }
 
     public Trainee createTrainee(Trainee trainee) {
-        traineeStorage.put((long)trainee.getId(), trainee);
+        traineeStorage.put(trainee.getId(), trainee);
         return trainee;
     }
 
     public Trainer createTrainer(Trainer trainer) {
-        trainerStorage.put((long)trainer.getId(), trainer);
+        trainerStorage.put(trainer.getId(), trainer);
         return trainer;
     }
 
     public Training createTraining(Training training) {
-        trainingStorage.put((long)training.getId(), training);
+        trainingStorage.put(training.getId(), training);
         return training;
     }
 
-    public Trainee getTrainee(int id) {
-        return traineeStorage.get((long) id);
+    public Optional<Trainee> getTrainee(int id) {
+        return Optional.ofNullable(traineeStorage.get(id));
     }
 
-    public Trainer getTrainer(int id) {
-        return trainerStorage.get((long) id);
+    public Optional<Trainer> getTrainer(int id) {
+        return Optional.ofNullable(trainerStorage.get(id));
     }
 
-    public Training getTraining(int id) {
-        return trainingStorage.get((long) id);
+    public Optional<Training> getTraining(int id) {
+        return Optional.ofNullable(trainingStorage.get(id));
     }
 
     public Trainee traineeUpdate(Trainee trainee) {
-        if (traineeStorage.get(trainee.getId()) != null) {
-            traineeStorage.replace((long)trainee.getId(), trainee);
-        } else {
-            return null;
+        if (!traineeStorage.containsKey(trainee.getId())) {
+            throw new NullPointerException("Does not contain such object");
         }
-
+        traineeStorage.replace(trainee.getId(), trainee);
         return trainee;
     }
 
     public Trainer trainerUpdate(Trainer trainer) {
         if (trainerStorage.get(trainer.getId()) != null) {
-            trainerStorage.replace((long)trainer.getId(), trainer);
+            trainerStorage.replace(trainer.getId(), trainer);
         } else {
             return null;
         }
@@ -88,7 +87,7 @@ public class StorageComponent {
     }
 
     public void deleteTrainee(int id) {
-        traineeStorage.remove((long) id);
+        traineeStorage.remove(id);
     }
 
 }

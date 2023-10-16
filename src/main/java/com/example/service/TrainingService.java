@@ -19,7 +19,7 @@ public class TrainingService implements CrudService<Training> {
     }
 
     @Override
-    public Map<Long, Training> list() {
+    public Map<Integer, Training> list() {
         return repository.findAll();
     }
 
@@ -30,6 +30,6 @@ public class TrainingService implements CrudService<Training> {
 
     @Override
     public Optional<Training> get(int id) {
-        return Optional.ofNullable(repository.get(id));
+        return repository.get(id);
     }
 }

@@ -21,7 +21,7 @@ public class TraineeService implements CrudService<Trainee> {
     }
 
     @Override
-    public Map<Long, Trainee> list() throws IOException, ParseException {
+    public Map<Integer, Trainee> list() throws IOException, ParseException {
         return repository.findAll();
     }
 
@@ -32,7 +32,7 @@ public class TraineeService implements CrudService<Trainee> {
 
     @Override
     public Optional<Trainee> get(int id) throws IOException, ParseException {
-        return Optional.ofNullable(repository.get(id));
+        return repository.get(id);
     }
 
     public void delete(int id) throws IOException, ParseException {
@@ -40,11 +40,9 @@ public class TraineeService implements CrudService<Trainee> {
     }
 
     public Trainee update(Trainee trainee) throws IOException, ParseException {
-        if (get(trainee.getId()) != null) {
-            repository.update(trainee);
-        } else {
-            return null;
+        if (get(trainee.getId()).isEmpty()) {
+            throw new NullPointerException("trainee is null");
         }
-        return trainee;
+        return repository.update(trainee);
     }
 }
