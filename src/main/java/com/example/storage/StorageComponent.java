@@ -77,12 +77,10 @@ public class StorageComponent {
     }
 
     public Trainer trainerUpdate(Trainer trainer) {
-        if (trainerStorage.get(trainer.getId()) != null) {
+        if (!trainerStorage.containsKey(trainer.getId())) {
             trainerStorage.replace(trainer.getId(), trainer);
-        } else {
-            return null;
         }
-
+        trainerStorage.replace(trainer.getId(), trainer);
         return trainer;
     }
 
