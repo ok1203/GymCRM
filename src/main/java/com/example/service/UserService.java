@@ -30,7 +30,7 @@ public class UserService implements CrudService<User> {
     }
 
     @Override
-    public User get(int id) {
+    public Optional<User> get(int id) {
         return null;
     }
 }

@@ -13,7 +13,7 @@ public interface CrudService<T> {
 
     T create(T t) throws IOException, ParseException;
 
-    T get(int id) throws IOException, ParseException;
+    Optional<T> get(int id) throws IOException, ParseException;
 
 
 }

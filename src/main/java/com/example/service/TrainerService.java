@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class TrainerService implements CrudService<Trainer> {
@@ -26,21 +27,16 @@ public class TrainerService implements CrudService<Trainer> {
 
     @Override
     public Trainer create(Trainer trainer) {
-        repository.findAll().put((long) trainer.getId(), trainer);
-        return get(trainer.getId());
+        repository.create(trainer);
+        return get(trainer.getId()).get();
     }
 
     @Override
-    public Trainer get(int id) {
-        return repository.findAll().get((long) id);
+    public Optional<Trainer> get(int id) {
+        return Optional.ofNullable(repository.get(id));
     }
 
-    public Trainer update(Trainer trainer) throws IOException, ParseException {
-        if (get(trainer.getId()) != null) {
-            repository.findAll().replace((long)trainer.getId(), trainer);
-        } else {
-            return null;
-        }
-        return get(trainer.getId());
+    public Trainer update(Trainer trainer) {
+        return repository.update(trainer);
     }
 }

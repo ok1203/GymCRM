@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class TrainingTypeService implements CrudService<TrainingType> {
@@ -28,7 +29,7 @@ public class TrainingTypeService implements CrudService<TrainingType> {
     }
 
     @Override
-    public TrainingType get(int id) {
+    public Optional<TrainingType> get(int id) {
         return null;
     }
 }

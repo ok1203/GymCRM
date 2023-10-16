@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class TrainingService implements CrudService<Training> {
@@ -24,12 +25,11 @@ public class TrainingService implements CrudService<Training> {
 
     @Override
     public Training create(Training training) {
-        repository.findAll().put((long) training.getId(), training);
-        return get(training.getId());
+        return repository.create(training);
     }
 
     @Override
-    public Training get(int id) {
-        return repository.findAll().get((long) id);
+    public Optional<Training> get(int id) {
+        return Optional.ofNullable(repository.get(id));
     }
 }
