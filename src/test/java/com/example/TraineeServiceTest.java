@@ -2,7 +2,7 @@ package com.example;
 
 import com.example.model.Trainee;
 import com.example.repo.TraineeRepository;
-import com.example.service.TraineeService;
+import com.example.repo.service.TraineeService;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

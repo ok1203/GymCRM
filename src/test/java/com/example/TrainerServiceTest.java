@@ -2,7 +2,7 @@ package com.example;
 
 import com.example.model.Trainer;
 import com.example.repo.TrainerRepository;
-import com.example.service.TrainerService;
+import com.example.repo.service.TrainerService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

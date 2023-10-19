@@ -2,14 +2,37 @@ package com.example.model;
 
 import com.example.RandomStringGenerator;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "_user")
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int Id;
+
+    @Column(name = "first_name")
     private String firstName;
+
+    @Column(name = "last_name")
     private String lastName;
+
+    @Column(name = "user_name")
     private String userName;
+
+    @Column(name = "password")
     private String password;
+
+    @Column(name = "is_active")
     private boolean isActive;
+
+    @OneToOne(mappedBy = "_user", cascade = CascadeType.ALL)
+    private Trainee trainee;
+
+    @OneToOne(mappedBy = "_user", cascade = CascadeType.ALL)
+    private Trainer trainer;
 
     public User(int id, String firstName, String lastName, boolean isActive) {
         Id = id;
@@ -27,6 +50,10 @@ public class User {
         this.userName = userName;
         this.password = password;
         this.isActive = isActive;
+    }
+
+    public User() {
+
     }
 
     public int getId() {

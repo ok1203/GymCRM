@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example.repo.service;
 
 import org.json.simple.parser.ParseException;
 

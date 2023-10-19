@@ -1,15 +1,33 @@
 package com.example.model;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "training")
 public class Training {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int Id;
+
+    @Column(name = "trainee_id")
     private int traineeId;
+
+    @Column(name = "trainer_id")
     private int trainerId;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "training_type_id")
     private int trainingTypeId;
+
+    @Column(name = "date")
     private Date date;
+
+    @Column(name = "duration")
     private int duration;
 
     public Training(int id, int traineeId, int trainerId, String name, int trainingTypeId, Date date, int duration) {
@@ -20,6 +38,10 @@ public class Training {
         this.trainingTypeId = trainingTypeId;
         this.date = date;
         this.duration = duration;
+    }
+
+    public Training() {
+
     }
 
     public int getId() {

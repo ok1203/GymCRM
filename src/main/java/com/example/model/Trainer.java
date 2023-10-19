@@ -1,15 +1,43 @@
 package com.example.model;
 
+import javax.persistence.*;
+import java.util.Map;
+
+@Entity
+@Table(name = "trainer")
 public class Trainer {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int Id;
+
+    @Column(name = "specialization_id")
     private int specializationId;
+
+    @Column(name = "user_id")
     private int userId;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", insertable = false, updatable = false  )
+    private User _user;
+
+    @ManyToMany
+    @JoinTable(
+            name = "trainer_trainee",
+            joinColumns = @JoinColumn(name = "trainer_id"),
+            inverseJoinColumns = @JoinColumn(name = "trainee_id")
+    )
+    private Map<Integer, Trainee> trainees;
 
     public Trainer(int id, int specializationId, int userId) {
         Id = id;
         this.specializationId = specializationId;
         this.userId = userId;
+    }
+
+    public Trainer() {
+
     }
 
     public int getId() {
