@@ -1,4 +1,4 @@
-package com.example.repo.service;
+package com.example.service;
 
 import com.example.model.Trainer;
 import com.example.repo.TrainerRepository;
@@ -25,8 +25,7 @@ public class TrainerService implements CrudService<Trainer> {
 
     @Override
     public Trainer create(Trainer trainer) {
-        repository.create(trainer);
-        return get(trainer.getId()).get();
+        return repository.create(trainer);
     }
 
     @Override

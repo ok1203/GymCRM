@@ -3,15 +3,17 @@ package com.example;
 import com.example.model.Trainee;
 import com.example.model.Trainer;
 import com.example.model.Training;
-import com.example.repo.service.TraineeService;
-import com.example.repo.service.TrainerService;
-import com.example.repo.service.TrainingService;
-import com.example.repo.service.UserService;
+import com.example.model.User;
+import com.example.service.TraineeService;
+import com.example.service.TrainerService;
+import com.example.service.TrainingService;
+import com.example.service.UserService;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Date;
@@ -33,24 +35,33 @@ public class Main {
 
         System.out.println();
 
-        System.out.println(service1.create(new Trainee(3, new Date(2000, 11,11), "123 St.", 1)));
-        System.out.println(service1.get(3));
-        System.out.println(service1.update(new Trainee(3, new Date(1999, 11, 11), "111 St.", 1)));
-        System.out.println(service1.get(3));
-        service1.delete(3);
-        System.out.println(service1.get(3));
-
-        System.out.println();
-
-        System.out.println(service2.create(new Trainer(3, 1, 1)));
-        System.out.println(service2.get(3));
-        System.out.println(service2.update(new Trainer(3, 2, 1)));
-        System.out.println(service2.get(3));
-
-        System.out.println();
-
-        System.out.println(service3.create(new Training(3, 1, 1, "swimming", 1, new Date(), 3)));
-        System.out.println(service3.get(3));
+//        User user = new User("John", "Johnson", true);
+//        System.out.println(user);
+//        System.out.println(service.create(user));
+//        System.out.println(service.list());
+//        service.delete(2);
+//        service.delete(3);
+//
+//        System.out.println();
+//
+//        System.out.println(service1.create(new Trainee(new Date(2000, 11,11), "123 St.", 1)));
+//        System.out.println(service1.get(1));
+//        System.out.println(service1.update(new Trainee(new Date(1999, 11, 11), "111 St.", 1)));
+//        System.out.println(service1.get(1));
+//        service1.delete(1);
+//        System.out.println(service1.get(1));
+//
+//        System.out.println();
+//
+//        System.out.println(service2.create(new Trainer(1, 1)));
+//        System.out.println(service2.get(2));
+//        System.out.println(service2.update(new Trainer(2, 2, 1)));
+//        System.out.println(service2.get(2));
+//
+//        System.out.println();
+//
+//        System.out.println(service3.create(new Training(3, 1, 1, "swimming", 1, new Date(), 3)));
+//        System.out.println(service3.get(3));
 
     }
 }

@@ -110,7 +110,7 @@ public class StorageBeanPostProcessor implements BeanPostProcessor {
             String address = (String) traineeJson.get("address");
             long userId = (Long) traineeJson.get("user-id");
 
-            Trainee trainee = new Trainee((int) id, new Date(year, month, day), address, (int) userId);
+            Trainee trainee = new Trainee(new Date(year, month, day), address, (int) userId);
             traineeStorage.put(id, trainee);
         }
 

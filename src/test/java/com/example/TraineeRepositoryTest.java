@@ -34,7 +34,7 @@ public class TraineeRepositoryTest {
     @Test
     public void testFindAll() throws IOException, ParseException, org.json.simple.parser.ParseException {
         Map<Integer, Trainee> traineeMap = new HashMap<>();
-        Trainee trainee1 = new Trainee(1, new Date(2000, 11, 11), "Address1", 1);
+        Trainee trainee1 = new Trainee(new Date(2000, 11, 11), "Address1", 1);
         traineeMap.put(1, trainee1);
 
         when(storageComponent.getTraineeMap()).thenReturn(traineeMap);
@@ -48,7 +48,7 @@ public class TraineeRepositoryTest {
 
     @Test
     public void testCreate() {
-        Trainee trainee = new Trainee(1, new Date(2000, 11, 11), "Address1", 1);
+        Trainee trainee = new Trainee(new Date(2000, 11, 11), "Address1", 1);
 
         when(storageComponent.createTrainee(any(Trainee.class))).thenReturn(trainee);
 
@@ -63,7 +63,7 @@ public class TraineeRepositoryTest {
 
     @Test
     public void testGet() {
-        Trainee trainee = new Trainee(1, new Date(2000, 11, 11), "Address1", 1);
+        Trainee trainee = new Trainee(new Date(2000, 11, 11), "Address1", 1);
 
         when(storageComponent.getTrainee(1)).thenReturn(Optional.of(trainee));
 
@@ -78,7 +78,7 @@ public class TraineeRepositoryTest {
 
     @Test
     public void testUpdate() {
-        Trainee trainee = new Trainee(1, new Date(2000, 11, 11), "Address1", 1);
+        Trainee trainee = new Trainee(new Date(2000, 11, 11), "Address1", 1);
 
         when(storageComponent.traineeUpdate(any(Trainee.class))).thenReturn(trainee);
 

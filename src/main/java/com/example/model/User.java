@@ -5,7 +5,7 @@ import com.example.RandomStringGenerator;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "_user")
+@Table(name = "gym_user")
 public class User {
 
     @Id
@@ -28,14 +28,13 @@ public class User {
     @Column(name = "is_active")
     private boolean isActive;
 
-    @OneToOne(mappedBy = "_user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "gym_user", cascade = CascadeType.ALL)
     private Trainee trainee;
 
-    @OneToOne(mappedBy = "_user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "gym_user", cascade = CascadeType.ALL)
     private Trainer trainer;
 
-    public User(int id, String firstName, String lastName, boolean isActive) {
-        Id = id;
+    public User(String firstName, String lastName, boolean isActive) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = firstName + "." + lastName;

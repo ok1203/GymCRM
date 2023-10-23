@@ -1,10 +1,11 @@
-package com.example.repo.service;
+package com.example.service;
 
 import com.example.model.User;
 import com.example.repo.UserRepository;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
@@ -26,11 +27,15 @@ public class UserService implements CrudService<User> {
 
     @Override
     public User create(User user) {
-        return null;
+        return repository.create(user);
     }
 
     @Override
     public Optional<User> get(int id) {
         return null;
+    }
+
+    public void delete(int id) {
+        repository.delete(id);
     }
 }

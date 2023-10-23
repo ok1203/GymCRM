@@ -1,4 +1,4 @@
-package com.example.repo.service;
+package com.example.service;
 
 import com.example.model.Trainee;
 import com.example.repo.TraineeRepository;

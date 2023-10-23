@@ -2,6 +2,7 @@ package com.example.repo;
 
 import com.example.model.Training;
 import com.example.storage.StorageComponent;
+import com.example.storage.TrainingStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +13,7 @@ import java.util.Optional;
 public class TrainingRepository implements CrudRepository<Training>{
 
     @Autowired
-    private StorageComponent storageComponent;
+    private TrainingStorage storageComponent;
 
     @Override
     public Map<Integer, Training> findAll() {

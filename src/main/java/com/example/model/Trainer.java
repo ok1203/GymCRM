@@ -20,7 +20,7 @@ public class Trainer {
 
     @OneToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false  )
-    private User _user;
+    private User gym_user;
 
     @ManyToMany
     @JoinTable(
@@ -32,6 +32,11 @@ public class Trainer {
 
     public Trainer(int id, int specializationId, int userId) {
         Id = id;
+        this.specializationId = specializationId;
+        this.userId = userId;
+    }
+
+    public Trainer( int specializationId, int userId) {
         this.specializationId = specializationId;
         this.userId = userId;
     }
@@ -71,5 +76,9 @@ public class Trainer {
                 ", specializationId=" + specializationId +
                 ", userId=" + userId +
                 '}';
+    }
+
+    public User getGym_user() {
+        return gym_user;
     }
 }

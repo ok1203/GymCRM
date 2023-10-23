@@ -8,7 +8,7 @@
         <property name="hibernate.connection.username">postgres</property>
         <property name="hibernate.connection.password">postgres</property>
         <property name="hibernate.current_session_context_class">thread</property>
-        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.show_sql">false</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <mapping class="com.example.model.User"/>
         <mapping class="com.example.model.Trainee"/>

@@ -24,13 +24,12 @@ public class Trainee {
 
     @OneToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User _user;
+    private User gym_user;
 
     @ManyToMany(mappedBy = "trainees")
     private Map<Integer, Trainer> trainers;
 
-    public Trainee(int id, Date dateOfBirth, String address, int userId) {
-        Id = id;
+    public Trainee( Date dateOfBirth, String address, int userId) {
         this.dateOfBirth = dateOfBirth;
         this.address = address;
         this.userId = userId;
@@ -80,5 +79,9 @@ public class Trainee {
                 ", address='" + address + '\'' +
                 ", userId=" + userId +
                 '}';
+    }
+
+    public User getGym_user() {
+        return gym_user;
     }
 }

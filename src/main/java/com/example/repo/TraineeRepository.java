@@ -2,6 +2,7 @@ package com.example.repo;
 
 import com.example.model.Trainee;
 import com.example.storage.StorageComponent;
+import com.example.storage.TraineeStorage;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import java.util.Optional;
 public class TraineeRepository implements CrudRepository<Trainee> {
 
     @Autowired
-    private StorageComponent storageComponent;
+    private TraineeStorage storageComponent;
 
     @Override
     public Map<Integer, Trainee> findAll() throws IOException, ParseException {
@@ -30,7 +31,7 @@ public class TraineeRepository implements CrudRepository<Trainee> {
     }
 
     public Trainee update(Trainee trainee){
-        return storageComponent.traineeUpdate(trainee);
+        return storageComponent.updateTrainee(trainee);
     }
 
     public void delete(int id) {
