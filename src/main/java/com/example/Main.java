@@ -30,10 +30,17 @@ public class Main {
         TrainingService service3 = applicationContext.getBean(TrainingService.class);
 
         log.info(service.list().toString());
-        log.warn(service1.list().toString());
-        log.error(service2.list().toString());
+        log.warn(service1.list("John.Johnson", "WSaY9aVIHQ").toString());
+        log.error(service2.list("John.Johnson", "WSaY9aVIHQ").toString());
+
+        String username = "John.Johnson", password = "WSaY9aVIHQ";
 
         System.out.println();
+
+
+        System.out.println(service1.getTraineeByUsername(username, password));
+        System.out.println(service1.get(2, username, password));
+        System.out.println(service1.getTraineeTrainings(2, username,password));
 
 //        User user = new User("John", "Johnson", true);
 //        System.out.println(user);

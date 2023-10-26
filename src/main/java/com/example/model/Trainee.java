@@ -11,7 +11,7 @@ public class Trainee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int Id;
+    private int id;
 
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
@@ -24,7 +24,7 @@ public class Trainee {
 
     @OneToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User gym_user;
+    private User gymUser;
 
     @ManyToMany(mappedBy = "trainees")
     private Map<Integer, Trainer> trainers;
@@ -40,11 +40,11 @@ public class Trainee {
     }
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        Id = id;
+        this.id = id;
     }
 
     public Date getDateOfBirth() {
@@ -74,7 +74,7 @@ public class Trainee {
     @Override
     public String toString() {
         return "Trainee{" +
-                "Id=" + Id +
+                "Id=" + id +
                 ", dateOfBirth=" + dateOfBirth +
                 ", address='" + address + '\'' +
                 ", userId=" + userId +
@@ -82,6 +82,6 @@ public class Trainee {
     }
 
     public User getGym_user() {
-        return gym_user;
+        return gymUser;
     }
 }

@@ -11,8 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,11 +32,11 @@ public class UserServiceTest {
     @Test
     public void testGetId() throws IOException, ParseException {
         int expectedInt = 1;
-        Map<Integer, User> userList = new HashMap<>();
-        userList.put(1, user);
+        List<User> userList = new ArrayList<>();
+        userList.add(user);
         when(repository.findAll()).thenReturn(userList);
         when(user.getId()).thenReturn(expectedInt);
-        User actual = service.list().get(1L);
+        User actual = service.list().get(0);
 
         assertEquals(expectedInt, actual.getId());
     }
@@ -44,11 +44,11 @@ public class UserServiceTest {
     @Test
     public void testGetFirstName() throws IOException, ParseException {
         String expectedStr = "John";
-        Map<Integer, User> userList = new HashMap<>();
-        userList.put(1, user);
+        List <User> userList = new ArrayList<>();
+        userList.add(user);
         when(repository.findAll()).thenReturn(userList);
         when(user.getFirstName()).thenReturn(expectedStr);
-        User actual = service.list().get(1L);
+        User actual = service.list().get(0);
 
         assertEquals(expectedStr, actual.getFirstName());
     }
@@ -56,11 +56,11 @@ public class UserServiceTest {
     @Test
     public void testGetLastName() throws IOException, ParseException {
         String expectedStr = "Johnson";
-        Map<Integer, User> userList = new HashMap<>();
-        userList.put(1, user);
+        List <User> userList = new ArrayList<>();
+        userList.add(user);
         when(repository.findAll()).thenReturn(userList);
         when(user.getLastName()).thenReturn(expectedStr);
-        User actual = service.list().get(1L);
+        User actual = service.list().get(0);
 
         assertEquals(expectedStr, actual.getLastName());
     }
@@ -68,11 +68,11 @@ public class UserServiceTest {
     @Test
     public void testGetUsername() throws IOException, ParseException {
         String expectedStr = "john.johnson";
-        Map<Integer, User> userList = new HashMap<>();
-        userList.put(1, user);
+        List <User> userList = new ArrayList<>();
+        userList.add(user);
         when(repository.findAll()).thenReturn(userList);
         when(user.getUserName()).thenReturn(expectedStr);
-        User actual = service.list().get(1L);
+        User actual = service.list().get(0);
 
         assertEquals(expectedStr, actual.getUserName());
     }
@@ -80,11 +80,11 @@ public class UserServiceTest {
     @Test
     public void testGetPassword() throws IOException, ParseException {
         String expectedStr = "password";
-        Map<Integer, User> userList = new HashMap<>();
-        userList.put(1, user);
+        List <User> userList = new ArrayList<>();
+        userList.add(user);
         when(repository.findAll()).thenReturn(userList);
         when(user.getPassword()).thenReturn(expectedStr);
-        User actual = service.list().get(1L);
+        User actual = service.list().get(0);
 
         assertEquals(expectedStr, actual.getPassword());
     }
@@ -92,11 +92,11 @@ public class UserServiceTest {
     @Test
     public void testIsIsActive() throws IOException, ParseException {
         Boolean expectedBool = true;
-        Map<Integer, User> userList = new HashMap<>();
-        userList.put(1, user);
+        List <User> userList = new ArrayList<>();
+        userList.add(user);
         when(repository.findAll()).thenReturn(userList);
         when(user.isActive()).thenReturn(expectedBool);
-        User actual = service.list().get(1L);
+        User actual = service.list().get(0);
 
         assertTrue(actual.isActive());
     }

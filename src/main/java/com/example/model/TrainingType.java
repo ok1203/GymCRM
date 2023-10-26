@@ -1,5 +1,7 @@
 package com.example.model;
 
+import org.springframework.lang.NonNull;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,13 +11,13 @@ public class TrainingType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int Id;
+    private int id;
 
     @Column(name = "type_name")
+    @NonNull
     private String typeName;
 
-    public TrainingType(int id, String typeName) {
-        Id = id;
+    public TrainingType(String typeName) {
         this.typeName = typeName;
     }
 
@@ -24,11 +26,11 @@ public class TrainingType {
     }
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getTypeName() {
@@ -42,7 +44,7 @@ public class TrainingType {
     @Override
     public String toString() {
         return "TrainingType{" +
-                "Id=" + Id +
+                "Id=" + id +
                 ", typeName='" + typeName + '\'' +
                 '}';
     }

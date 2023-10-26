@@ -10,7 +10,7 @@ public class Trainer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int Id;
+    private int id;
 
     @Column(name = "specialization_id")
     private int specializationId;
@@ -20,7 +20,7 @@ public class Trainer {
 
     @OneToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false  )
-    private User gym_user;
+    private User gymUser;
 
     @ManyToMany
     @JoinTable(
@@ -31,7 +31,7 @@ public class Trainer {
     private Map<Integer, Trainee> trainees;
 
     public Trainer(int id, int specializationId, int userId) {
-        Id = id;
+        this.id = id;
         this.specializationId = specializationId;
         this.userId = userId;
     }
@@ -46,11 +46,11 @@ public class Trainer {
     }
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        Id = id;
+        this.id = id;
     }
 
     public int getSpecializationId() {
@@ -72,13 +72,13 @@ public class Trainer {
     @Override
     public String toString() {
         return "Trainer{" +
-                "Id=" + Id +
+                "Id=" + id +
                 ", specializationId=" + specializationId +
                 ", userId=" + userId +
                 '}';
     }
 
     public User getGym_user() {
-        return gym_user;
+        return gymUser;
     }
 }

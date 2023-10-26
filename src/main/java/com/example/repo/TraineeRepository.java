@@ -1,41 +1,67 @@
 package com.example.repo;
 
 import com.example.model.Trainee;
-import com.example.storage.StorageComponent;
+import com.example.model.Training;
 import com.example.storage.TraineeStorage;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class TraineeRepository implements CrudRepository<Trainee> {
+public class TraineeRepository {
 
     @Autowired
     private TraineeStorage storageComponent;
 
-    @Override
-    public Map<Integer, Trainee> findAll() throws IOException, ParseException {
-        return storageComponent.getTraineeMap();
+    public List<Trainee> findAll(String username, String password) throws IOException, ParseException {
+        return storageComponent.getTraineeMap(username, password);
     }
 
     public Trainee create(Trainee trainee) {
         return storageComponent.createTrainee(trainee);
     }
 
-    public Optional<Trainee> get(int id) {
-        return storageComponent.getTrainee(id);
+    public Optional<Trainee> get(int id, String username, String password) {
+        return storageComponent.getTrainee(id, username, password);
     }
 
-    public Trainee update(Trainee trainee){
-        return storageComponent.updateTrainee(trainee);
+    public Trainee update(Trainee trainee, String username, String password){
+        return storageComponent.updateTrainee(trainee, username, password);
     }
 
-    public void delete(int id) {
-        storageComponent.deleteTrainee(id);
+    public void delete(int id, String username, String password) {
+        storageComponent.deleteTrainee(id, username, password);
     }
 
+    public Optional<Trainee> getTraineeByUsername(String username, String password) {
+        return storageComponent.getTraineeByUsername(username, password);
+    }
+
+    public void changeTraineePassword(int traineeId, String newPassword, String username, String password) {
+        storageComponent.changeTraineePassword(traineeId, newPassword, username, password);
+    }
+
+    public void activateTrainee(int traineeId, String username, String password) {
+        storageComponent.activateTrainee(traineeId, username, password);
+    }
+
+    public void deactivateTrainee(int traineeId, String username, String password) {
+        storageComponent.deactivateTrainee(traineeId, username, password);
+    }
+
+    public void deleteTraineeByUsername(String username, String password) {
+        storageComponent.deleteTraineeByUsername(username, password);
+    }
+
+    public void addTrainingToTrainee(Trainee trainee, Training training, String username, String password) {
+        storageComponent.addTrainingToTrainee(trainee, training, username, password);
+    }
+
+    public List<Training> getTraineeTrainings(int traineeId, String username, String password) {
+        return storageComponent.getTraineeTrainings(traineeId, username, password);
+    }
 }

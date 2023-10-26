@@ -1,19 +1,19 @@
 package com.example.storage;
 
+import com.example.model.Trainee;
 import com.example.model.Trainer;
+import com.example.model.Training;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.OptimisticLockException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class TrainerStorage {
@@ -21,124 +21,228 @@ public class TrainerStorage {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public Map<Integer, Trainer> getTrainerMap() {
-        Map<Integer, Trainer> traineeMap = new HashMap<>();
-        try (Session session = sessionFactory.openSession()) {
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
-            Root<Trainer> root = criteriaQuery.from(Trainer.class);
-            criteriaQuery.select(root);
+    @Transactional
+    public List<Trainer> getTrainerMap(String username, String password) {
+        if (authenticateTrainer(username, password)) {
+            List<Trainer> trainers;
+            try (Session session = sessionFactory.openSession()) {
+                CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+                CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
+                Root<Trainer> root = criteriaQuery.from(Trainer.class);
+                criteriaQuery.select(root);
 
-            List<Trainer> trainers = session.createQuery(criteriaQuery).list();
-            for (Trainer trainer : trainers) {
-                traineeMap.put(trainer.getId(), trainer);
+                trainers = session.createQuery(criteriaQuery).list();
+
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to retrieve all trainers", e);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            return trainers;
+        } else {
+            throw new SecurityException("Authentication failed for user: " + username);
         }
-        return traineeMap;
     }
 
-    public Optional<Trainer> getTrainer(int trainerId) {
-        Trainer trainer = null;
-        try (Session session = sessionFactory.openSession()) {
-            trainer = session.get(Trainer.class, trainerId);
-        } catch (Exception e) {
-            e.printStackTrace();
+    @Transactional
+    public Optional<Trainer> getTrainer(int trainerId, String username, String password) {
+        if (authenticateTrainer(username, password)) {
+            try (Session session = sessionFactory.openSession()) {
+                Trainer trainer = session.get(Trainer.class, trainerId);
+                return Optional.ofNullable(trainer);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to retrieve trainer by ID: " + trainerId, e);
+            }
+        } else {
+            throw new SecurityException("Authentication failed for user: " + username);
         }
-        return Optional.ofNullable(trainer);
     }
 
-    public Optional<Trainer> getTrainerByUsername(String username) {
-        Trainer trainer = null;
-        try (Session session = sessionFactory.openSession()) {
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
-            Root<Trainer> root = criteriaQuery.from(Trainer.class);
-            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("gym_user").get("user_name"), username));
+    @Transactional
+    public Optional<Trainer> getTrainerByUsername(String username, String password) {
+        if (authenticateTrainer(username, password)) {
+            try (Session session = sessionFactory.openSession()) {
+                CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+                CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
+                Root<Trainer> root = criteriaQuery.from(Trainer.class);
+                criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("gymUser").get("userName"), username));
 
-            trainer = session.createQuery(criteriaQuery).uniqueResult();
-        } catch (Exception e) {
-            e.printStackTrace();
+                Trainer trainer = session.createQuery(criteriaQuery).uniqueResult();
+                return Optional.ofNullable(trainer);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to retrieve trainer by username: " + username, e);
+            }
+        } else {
+            throw new SecurityException("Authentication failed for user: " + username);
         }
-        return Optional.ofNullable(trainer);
     }
 
+    @Transactional
     public Trainer createTrainer(Trainer trainer) {
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
             session.save(trainer);
-            session.getTransaction().commit();
+            return trainer;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to create trainer", e);
         }
-        return trainer;
     }
 
-    public Trainer updateTrainer(Trainer trainer) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.update(trainer);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return trainer;
-    }
-
-    public void changeTrainerPassword(int trainerId, String newPassword) {
-        try (Session session = sessionFactory.openSession()) {
-            Trainer trainer = session.get(Trainer.class, trainerId);
-            if (trainer != null) {
-                trainer.getGym_user().setPassword(newPassword);
-                session.beginTransaction();
-                session.saveOrUpdate(trainer);
-                session.getTransaction().commit();
+    @Transactional
+    public Trainer updateTrainer(Trainer trainer, String username, String password) {
+        if (authenticateTrainer(username, password)) {
+            try (Session session = sessionFactory.openSession()) {
+                session.update(trainer);
+                return trainer;
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to update trainer", e);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            throw new SecurityException("Authentication failed for user: " + username);
         }
     }
 
-    public void deleteTrainer(int trainerId) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            Trainer trainer = session.get(Trainer.class, trainerId);
-            if (trainer != null) {
-                session.delete(trainer);
+    @Transactional
+    public void changeTrainerPassword(int trainerId, String newPassword, String username, String password) {
+        if (authenticateTrainer(username, password)) {
+            try (Session session = sessionFactory.openSession()) {
+                Trainer trainer = session.get(Trainer.class, trainerId);
+                if (trainer != null) {
+                    trainer.getGym_user().setPassword(newPassword);
+                    session.saveOrUpdate(trainer);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to change trainer's password", e);
             }
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            throw new SecurityException("Authentication failed for user: " + username);
         }
     }
 
-    public void activateTrainer(int trainerId) {
-        try (Session session = sessionFactory.openSession()) {
-            Trainer trainer = session.get(Trainer.class, trainerId);
-            if (trainer != null) {
-                trainer.getGym_user().setActive(true);
-                session.beginTransaction();
-                session.saveOrUpdate(trainer);
-                session.getTransaction().commit();
+    @Transactional
+    public void deleteTrainer(int trainerId, String username, String password) {
+        if (authenticateTrainer(username, password)) {
+            try (Session session = sessionFactory.openSession()) {
+                Trainer trainer = session.get(Trainer.class, trainerId);
+                if (trainer != null) {
+                    session.delete(trainer);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to delete trainer by ID: " + trainerId, e);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            throw new SecurityException("Authentication failed for user: " + username);
         }
     }
 
-    public void deactivateTrainer(int trainerId) {
-        try (Session session = sessionFactory.openSession()) {
-            Trainer trainer = session.get(Trainer.class, trainerId);
-            if (trainer != null) {
-                trainer.getGym_user().setActive(false);
-                session.beginTransaction();
-                session.saveOrUpdate(trainer);
-                session.getTransaction().commit();
+    @Transactional
+    public void activateTrainer(int trainerId, String username, String password) {
+        if (authenticateTrainer(username, password)) {
+            try (Session session = sessionFactory.openSession()) {
+                Trainer trainer = session.get(Trainer.class, trainerId);
+                if (trainer != null) {
+                    trainer.getGym_user().setActive(true);
+                    session.saveOrUpdate(trainer);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to activate trainer", e);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            throw new SecurityException("Authentication failed for user: " + username);
         }
     }
 
+    @Transactional
+    public void deactivateTrainer(int trainerId, String username, String password) {
+        if (authenticateTrainer(username, password)) {
+            try (Session session = sessionFactory.openSession()) {
+                Trainer trainer = session.get(Trainer.class, trainerId);
+                if (trainer != null) {
+                    trainer.getGym_user().setActive(false);
+                    session.saveOrUpdate(trainer);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to deactivate trainer", e);
+            }
+        } else {
+            throw new SecurityException("Authentication failed for user: " + username);
+        }
+    }
+
+    @Transactional
+    public List<Trainer> getNotAssignedActiveTrainersForTrainee(Trainee trainee, String username, String password) {
+        if (authenticateTrainer(username, password)) {
+            try (Session session = sessionFactory.openSession()) {
+                CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+                CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
+                Root<Trainer> root = criteriaQuery.from(Trainer.class);
+
+                criteriaQuery.select(root).where(
+                        criteriaBuilder.and(
+                                criteriaBuilder.equal(root.get("isActive"), true),
+                                criteriaBuilder.not(criteriaBuilder.isMember(trainee, root.get("trainees")))
+                        )
+                );
+
+                return session.createQuery(criteriaQuery).list();
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to get not assigned active trainers for trainee", e);
+            }
+        } else {
+            throw new SecurityException("Authentication failed for user: " + username);
+        }
+    }
+
+    @Transactional
+    public void addTrainingToTrainer(Trainer trainer, Training training, String username, String password) {
+        if (authenticateTrainer(username, password)) {
+            try (Session session = sessionFactory.openSession()) {
+                training.setTraineeId(trainer.getId());
+                session.update(training);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to update trainer", e);
+            }
+        } else {
+            throw new SecurityException("Authentication failed for user: " + username);
+        }
+    }
+
+    @Transactional
+    public List<Training> getTrainerTrainings(int trainerId, String username, String password) {
+        if (authenticateTrainer(username, password)) {
+            try (Session session = sessionFactory.openSession()) {
+                CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+                CriteriaQuery<Training> criteriaQuery = criteriaBuilder.createQuery(Training.class);
+                Root<Training> trainingRoot = criteriaQuery.from(Training.class);
+                Join<Training, Trainer> trainerJoin = trainingRoot.join("trainer");
+
+                criteriaQuery.select(trainingRoot).where(criteriaBuilder.equal(trainerJoin.get("id"), trainerId));
+
+                List<Training> trainings = session.createQuery(criteriaQuery).list();
+                return trainings;
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to retrieve trainee's trainings", e);
+            }
+        } else {
+            throw new SecurityException("Authentication failed for user: " + username);
+        }
+    }
+
+    @Transactional
+    public boolean authenticateTrainer(String username, String password) {
+        try (Session session = sessionFactory.openSession()) {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
+            Root<Trainer> root = criteriaQuery.from(Trainer.class);
+            criteriaQuery.select(root).where(
+                    criteriaBuilder.equal(root.get("gymUser").get("userName"), username),
+                    criteriaBuilder.equal(root.get("gymUser").get("password"), password)
+            );
+
+            List<Trainer> trainers = session.createQuery(criteriaQuery).getResultList();
+
+            return !trainers.isEmpty(); // Authentication succeeds if the query returns any results.
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to authenticate trainer", e);
+        }
+    }
 }
+
+

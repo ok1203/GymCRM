@@ -1,17 +1,17 @@
 package com.example.service;
 
+import com.example.model.Training;
 import com.example.model.User;
 import com.example.repo.UserRepository;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
 
 @Service
-public class UserService implements CrudService<User> {
+public class UserService {
 
     private UserRepository repository;
 
@@ -20,19 +20,16 @@ public class UserService implements CrudService<User> {
         repository = userRepository;
     }
 
-    @Override
-    public Map<Integer, User> list() throws IOException, ParseException {
+    public List<User> list() throws IOException, ParseException {
         return repository.findAll();
     }
 
-    @Override
     public User create(User user) {
         return repository.create(user);
     }
 
-    @Override
     public Optional<User> get(int id) {
-        return null;
+        return repository.get(1);
     }
 
     public void delete(int id) {

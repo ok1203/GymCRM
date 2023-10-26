@@ -1,5 +1,7 @@
 package com.example.model;
 
+import org.springframework.lang.NonNull;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -10,7 +12,7 @@ public class Training {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int Id;
+    private int id;
 
     @Column(name = "trainee_id")
     private int traineeId;
@@ -19,19 +21,29 @@ public class Training {
     private int trainerId;
 
     @Column(name = "name")
+    @NonNull
     private String name;
 
     @Column(name = "training_type_id")
     private int trainingTypeId;
 
     @Column(name = "date")
+    @NonNull
     private Date date;
 
     @Column(name = "duration")
+    @NonNull
     private int duration;
 
-    public Training(int id, int traineeId, int trainerId, String name, int trainingTypeId, Date date, int duration) {
-        Id = id;
+    @ManyToOne
+    @JoinColumn(name = "trainee_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Trainee trainee;
+
+    @ManyToOne
+    @JoinColumn(name = "trainer_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Trainer trainer;
+
+    public Training( int traineeId, int trainerId, String name, int trainingTypeId, Date date, int duration) {
         this.traineeId = traineeId;
         this.trainerId = trainerId;
         this.name = name;
@@ -45,11 +57,11 @@ public class Training {
     }
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        Id = id;
+        this.id = id;
     }
 
     public int getTraineeId() {
@@ -100,10 +112,18 @@ public class Training {
         this.duration = duration;
     }
 
+    public Trainee getTrainee() {
+        return trainee;
+    }
+
+    public Trainer getTrainer() {
+        return trainer;
+    }
+
     @Override
     public String toString() {
         return "Training{" +
-                "Id=" + Id +
+                "Id=" + id +
                 ", traineeId=" + traineeId +
                 ", trainerId=" + trainerId +
                 ", name='" + name + '\'' +

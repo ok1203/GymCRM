@@ -5,81 +5,74 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class TrainingStorage {
+
     @Autowired
     private SessionFactory sessionFactory;
 
-    public Map<Integer, Training> getTrainingMap() {
-        Map<Integer, Training> trainingMap = new HashMap<>();
+    @Transactional
+    public List<Training> getTrainingMap() {
+        List<Training> trainings;
         try (Session session = sessionFactory.openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<Training> criteriaQuery = criteriaBuilder.createQuery(Training.class);
             Root<Training> root = criteriaQuery.from(Training.class);
             criteriaQuery.select(root);
 
-            List<Training> trainings = session.createQuery(criteriaQuery).list();
-            for (Training training : trainings) {
-                trainingMap.put(training.getId(), training);
-            }
+            trainings = session.createQuery(criteriaQuery).list();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to retrieve all trainings", e);
         }
-        return trainingMap;
+        return trainings;
     }
 
+    @Transactional
     public Optional<Training> getTraining(int trainingId) {
-        Training training = null;
         try (Session session = sessionFactory.openSession()) {
-            training = session.get(Training.class, trainingId);
+            Training training = session.get(Training.class, trainingId);
+            return Optional.ofNullable(training);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to retrieve training by ID: " + trainingId, e);
         }
-        return Optional.ofNullable(training);
     }
 
+    @Transactional
     public Training createTraining(Training training) {
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
             session.save(training);
-            session.getTransaction().commit();
+            return training;
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to create training", e);
         }
-        return training;
     }
 
+    @Transactional
     public void updateTraining(Training training) {
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
             session.update(training);
-            session.getTransaction().commit();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to update training", e);
         }
     }
 
+    @Transactional
     public void deleteTraining(int trainingId) {
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
             Training training = session.get(Training.class, trainingId);
             if (training != null) {
                 session.delete(training);
             }
-            session.getTransaction().commit();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to delete training by ID: " + trainingId, e);
         }
     }
-
-
 }
+

@@ -3,7 +3,6 @@ package com.example.storage;
 import com.example.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,97 +21,60 @@ public class UserStorage {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public Map<Integer, User> getAllUsers() {
-        Map<Integer, User> userMap = new HashMap<>();
-        Session session = null;
-        Transaction transaction = null;
-
-        try {
-            session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
-
+    @Transactional
+    public List<User> getAllUsers() {
+        List<User> users;
+        try (Session session = sessionFactory.openSession()) {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
             Root<User> root = criteriaQuery.from(User.class);
             criteriaQuery.select(root);
 
-            List<User> users = session.createQuery(criteriaQuery).list();
-            for (User user : users) {
-                userMap.put(user.getId(), user);
-            }
-
-            transaction.commit();
+             users = session.createQuery(criteriaQuery).list();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            throw new RuntimeException("Failed to retrieve all users", e);
         }
-
-        return userMap;
+        return users;
     }
 
+    @Transactional
     public Optional<User> getUserById(int userId) {
-        User user = null;
         try (Session session = sessionFactory.openSession()) {
-            user = session.get(User.class, userId);
+            User user = session.get(User.class, userId);
+            return Optional.ofNullable(user);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to retrieve user by ID: " + userId, e);
         }
-        return Optional.ofNullable(user);
     }
 
+    @Transactional
     public User saveUser(User user) {
-        Session session = null;
-        Transaction transaction = null;
-
-        try {
-            session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
-
-            // Perform the create operation
+        try (Session session = sessionFactory.openSession()) {
             session.save(user);
-
-            transaction.commit();
+            return user;
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
+            throw new RuntimeException("Failed to save user", e);
         }
-
-        return user;
     }
 
-
+    @Transactional
     public void updateUser(User user) {
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
             session.update(user);
-            session.getTransaction().commit();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to update user", e);
         }
     }
 
+    @Transactional
     public void deleteUser(int userId) {
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
             User user = session.get(User.class, userId);
             if (user != null) {
                 session.delete(user);
             }
-            session.getTransaction().commit();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to delete user by ID: " + userId, e);
         }
     }
 }

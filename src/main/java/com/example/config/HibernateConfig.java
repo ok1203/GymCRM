@@ -1,4 +1,4 @@
-package com.example.storage;
+package com.example.config;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;

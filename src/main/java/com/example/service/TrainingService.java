@@ -5,11 +5,11 @@ import com.example.repo.TrainingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TrainingService implements CrudService<Training> {
+public class TrainingService {
 
     private TrainingRepository repository;
 
@@ -18,17 +18,14 @@ public class TrainingService implements CrudService<Training> {
         repository = trainingRepository;
     }
 
-    @Override
-    public Map<Integer, Training> list() {
+    public List<Training> list() {
         return repository.findAll();
     }
 
-    @Override
     public Training create(Training training) {
         return repository.create(training);
     }
 
-    @Override
     public Optional<Training> get(int id) {
         return repository.get(id);
     }

@@ -1,6 +1,7 @@
 package com.example.model;
 
 import com.example.RandomStringGenerator;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 
@@ -11,27 +12,32 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int Id;
+    private int id;
 
     @Column(name = "first_name")
+    @NonNull
     private String firstName;
 
     @Column(name = "last_name")
+    @NonNull
     private String lastName;
 
     @Column(name = "user_name")
+    @NonNull
     private String userName;
 
+    @NonNull
     @Column(name = "password")
     private String password;
 
+    @NonNull
     @Column(name = "is_active")
     private boolean isActive;
 
-    @OneToOne(mappedBy = "gym_user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "gymUser", cascade = CascadeType.ALL)
     private Trainee trainee;
 
-    @OneToOne(mappedBy = "gym_user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "gymUser", cascade = CascadeType.ALL)
     private Trainer trainer;
 
     public User(String firstName, String lastName, boolean isActive) {
@@ -42,25 +48,16 @@ public class User {
         this.isActive = isActive;
     }
 
-    public User(int id, String firstName, String lastName, String userName, String password, boolean isActive) {
-        Id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.userName = userName;
-        this.password = password;
-        this.isActive = isActive;
-    }
-
     public User() {
 
     }
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -106,7 +103,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "Id=" + Id +
+                "Id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", userName='" + userName + '\'' +

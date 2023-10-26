@@ -1,22 +1,20 @@
 package com.example.repo;
 
 import com.example.model.Training;
-import com.example.storage.StorageComponent;
 import com.example.storage.TrainingStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class TrainingRepository implements CrudRepository<Training>{
+public class TrainingRepository {
 
     @Autowired
     private TrainingStorage storageComponent;
 
-    @Override
-    public Map<Integer, Training> findAll() {
+    public List<Training> findAll() {
         return storageComponent.getTrainingMap();
     }
 

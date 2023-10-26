@@ -1,8 +1,11 @@
 package com.example;
 
 import com.example.model.Trainee;
+import com.example.model.Training;
 import com.example.repo.TraineeRepository;
 import com.example.storage.StorageComponent;
+import com.example.storage.TraineeStorage;
+import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,11 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -28,22 +27,21 @@ public class TraineeRepositoryTest {
     private TraineeRepository traineeRepository;
 
     @Mock
-    private StorageComponent storageComponent;
-
+    private TraineeStorage storageComponent;
 
     @Test
-    public void testFindAll() throws IOException, ParseException, org.json.simple.parser.ParseException {
-        Map<Integer, Trainee> traineeMap = new HashMap<>();
+    public void testFindAll() throws IOException, ParseException {
+        List<Trainee> trainees = new ArrayList<>();
         Trainee trainee1 = new Trainee(new Date(2000, 11, 11), "Address1", 1);
-        traineeMap.put(1, trainee1);
+        trainees.add(trainee1);
 
-        when(storageComponent.getTraineeMap()).thenReturn(traineeMap);
+        when(storageComponent.getTraineeMap("username", "password")).thenReturn(trainees);
 
-        Map<Integer, Trainee> result = traineeRepository.findAll();
+        List<Trainee> result = traineeRepository.findAll("username", "password");
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(trainee1, result.get(1L));
+        assertEquals(trainee1, result.get(0));
     }
 
     @Test
@@ -55,7 +53,7 @@ public class TraineeRepositoryTest {
         Trainee result = traineeRepository.create(trainee);
 
         assertNotNull(result);
-        assertEquals(1, result.getId());
+        assertEquals(0, result.getId());
         assertEquals(new Date(2000, 11, 11), result.getDateOfBirth());
         assertEquals("Address1", result.getAddress());
         assertEquals(1, result.getUserId());
@@ -65,12 +63,12 @@ public class TraineeRepositoryTest {
     public void testGet() {
         Trainee trainee = new Trainee(new Date(2000, 11, 11), "Address1", 1);
 
-        when(storageComponent.getTrainee(1)).thenReturn(Optional.of(trainee));
+        when(storageComponent.getTrainee(1, "username", "password")).thenReturn(Optional.of(trainee));
 
-        Optional<Trainee> result = traineeRepository.get(1);
+        Optional<Trainee> result = traineeRepository.get(1, "username", "password");
 
         assertNotNull(result);
-        assertEquals(1, result.get().getId());
+        assertEquals(0, result.get().getId());
         assertEquals(new Date(2000, 11, 11), result.get().getDateOfBirth());
         assertEquals("Address1", result.get().getAddress());
         assertEquals(1, result.get().getUserId());
@@ -80,12 +78,12 @@ public class TraineeRepositoryTest {
     public void testUpdate() {
         Trainee trainee = new Trainee(new Date(2000, 11, 11), "Address1", 1);
 
-        when(storageComponent.traineeUpdate(any(Trainee.class))).thenReturn(trainee);
+        when(storageComponent.updateTrainee(trainee, "username", "password")).thenReturn(trainee);
 
-        Trainee result = traineeRepository.update(trainee);
+        Trainee result = traineeRepository.update(trainee, "username", "password");
 
         assertNotNull(result);
-        assertEquals(1, result.getId());
+        assertEquals(0, result.getId());
         assertEquals(new Date(2000, 11, 11), result.getDateOfBirth());
         assertEquals("Address1", result.getAddress());
         assertEquals(1, result.getUserId());
@@ -93,8 +91,76 @@ public class TraineeRepositoryTest {
 
     @Test
     public void testDelete() {
-        traineeRepository.delete(1);
+        traineeRepository.delete(1, "l", "");
 
-        verify(storageComponent).deleteTrainee(1);
+        verify(storageComponent).deleteTrainee(1, "l", "");
+    }
+
+    @Test
+    public void testGetTraineeByUsername() {
+        Trainee trainee = new Trainee(new Date(2000, 11, 11), "Address1", 1);
+
+        when(storageComponent.getTraineeByUsername("username", "password")).thenReturn(Optional.of(trainee));
+
+        Optional<Trainee> result = traineeRepository.getTraineeByUsername("username", "password");
+
+        assertNotNull(result);
+        assertEquals(0, result.get().getId());
+        assertEquals(new Date(2000, 11, 11), result.get().getDateOfBirth());
+        assertEquals("Address1", result.get().getAddress());
+        assertEquals(1, result.get().getUserId());
+    }
+
+    @Test
+    public void testChangeTraineePassword() {
+        traineeRepository.changeTraineePassword(1, "newPassword", "username", "password");
+
+        verify(storageComponent).changeTraineePassword(1, "newPassword", "username", "password");
+    }
+
+    @Test
+    public void testActivateTrainee() {
+        traineeRepository.activateTrainee(1, "username", "password");
+
+        verify(storageComponent).activateTrainee(1, "username", "password");
+    }
+
+    @Test
+    public void testDeactivateTrainee() {
+        traineeRepository.deactivateTrainee(1, "username", "password");
+
+        verify(storageComponent).deactivateTrainee(1, "username", "password");
+    }
+
+    @Test
+    public void testDeleteTraineeByUsername() {
+        traineeRepository.deleteTraineeByUsername("username", "password");
+
+        verify(storageComponent).deleteTraineeByUsername("username", "password");
+    }
+
+    @Test
+    public void testAddTrainingToTrainee() {
+        Trainee trainee = new Trainee(new Date(2000, 11, 11), "Address1", 1);
+        Training training = new Training(1, 1, "Training1", 1, new Date(), 60);
+
+        traineeRepository.addTrainingToTrainee(trainee, training, "username", "password");
+
+        verify(storageComponent).addTrainingToTrainee(trainee, training, "username", "password");
+    }
+
+    @Test
+    public void testGetTraineeTrainings() {
+        List<Training> trainings = new ArrayList<>();
+        Training training = new Training(1, 1, "Training1", 1, new Date(), 60);
+        trainings.add(training);
+
+        when(storageComponent.getTraineeTrainings(1, "username", "password")).thenReturn(trainings);
+
+        List<Training> result = traineeRepository.getTraineeTrainings(1, "username", "password");
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(training, result.get(0));
     }
 }
