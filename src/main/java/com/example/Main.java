@@ -37,17 +37,19 @@ public class Main {
 
         System.out.println();
 
-
-        System.out.println(service1.getTraineeByUsername(username, password));
-        System.out.println(service1.get(2, username, password));
-        System.out.println(service1.getTraineeTrainings(2, username,password));
-
+//        System.out.println(service1.getTraineeByUsername(username, password));
+//        System.out.println(service1.get(2, username, password));
+//        System.out.println(service1.getTraineeTrainings(2, username,password));
+//
+//        System.out.println(service1.getTraineeByUsername(username, password));
+//        service1.deactivateTrainee(2, username, password);
+//        System.out.println(service.list());
+//
 //        User user = new User("John", "Johnson", true);
 //        System.out.println(user);
 //        System.out.println(service.create(user));
 //        System.out.println(service.list());
-//        service.delete(2);
-//        service.delete(3);
+//
 //
 //        System.out.println();
 //

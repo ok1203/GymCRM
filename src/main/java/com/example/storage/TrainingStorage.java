@@ -18,7 +18,6 @@ public class TrainingStorage {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Transactional
     public List<Training> getTrainingMap() {
         List<Training> trainings;
         try (Session session = sessionFactory.openSession()) {
@@ -34,7 +33,6 @@ public class TrainingStorage {
         return trainings;
     }
 
-    @Transactional
     public Optional<Training> getTraining(int trainingId) {
         try (Session session = sessionFactory.openSession()) {
             Training training = session.get(Training.class, trainingId);

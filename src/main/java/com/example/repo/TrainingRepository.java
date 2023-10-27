@@ -25,4 +25,8 @@ public class TrainingRepository {
     public Optional<Training> get(int id) {
         return storageComponent.getTraining(id);
     }
+
+    public void delete(int id) {
+        storageComponent.deleteTraining(id);
+    }
 }

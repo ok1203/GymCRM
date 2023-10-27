@@ -32,4 +32,16 @@ public class UserRepository {
     public void delete(int id) {
         userStorage.deleteUser(id);
     }
+
+    public void changeUserPassword(int userId, String newPassword) {
+        userStorage.changeUserPassword(userId, newPassword);
+    }
+
+    public void activateUser(int userId) {
+        userStorage.activateUser(userId);
+    }
+
+    public void deactivateUser(int userId) {
+        userStorage.deactivateUser(userId);
+    }
 }

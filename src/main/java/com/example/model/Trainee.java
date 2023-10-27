@@ -22,11 +22,11 @@ public class Trainee {
     @Column(name = "user_id")
     private int userId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User gymUser;
 
-    @ManyToMany(mappedBy = "trainees")
+    @ManyToMany(mappedBy = "trainees", cascade = CascadeType.ALL)
     private Map<Integer, Trainer> trainers;
 
     public Trainee( Date dateOfBirth, String address, int userId) {

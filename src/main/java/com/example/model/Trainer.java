@@ -18,11 +18,11 @@ public class Trainer {
     @Column(name = "user_id")
     private int userId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false  )
     private User gymUser;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "trainer_trainee",
             joinColumns = @JoinColumn(name = "trainer_id"),

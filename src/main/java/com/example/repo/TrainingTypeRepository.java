@@ -17,4 +17,8 @@ public class TrainingTypeRepository {
     public List<TrainingType> findAll() {
         return storageComponent.getTrainingTypeMap();
     }
+
+    public void delete(int id) {
+        storageComponent.deleteTrainingType(id);
+    }
 }

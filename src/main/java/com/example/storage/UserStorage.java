@@ -21,7 +21,6 @@ public class UserStorage {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Transactional
     public List<User> getAllUsers() {
         List<User> users;
         try (Session session = sessionFactory.openSession()) {
@@ -37,7 +36,6 @@ public class UserStorage {
         return users;
     }
 
-    @Transactional
     public Optional<User> getUserById(int userId) {
         try (Session session = sessionFactory.openSession()) {
             User user = session.get(User.class, userId);
@@ -75,6 +73,51 @@ public class UserStorage {
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete user by ID: " + userId, e);
+        }
+    }
+
+    @Transactional
+    public void changeUserPassword(int userId, String newPassword) {
+        try (Session session = sessionFactory.openSession()) {
+            User user = session.get(User.class, userId);
+            if (user != null) {
+                user.setPassword(newPassword);
+                session.update(user);
+            } else {
+                throw new RuntimeException("User not found with ID: " + userId);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to change user password", e);
+        }
+    }
+
+    @Transactional
+    public void activateUser(int userId) {
+        try (Session session = sessionFactory.openSession()) {
+            User user = session.get(User.class, userId);
+            if (user != null) {
+                user.setActive(true);
+                session.update(user);
+            } else {
+                throw new RuntimeException("User not found with ID: " + userId);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to activate user", e);
+        }
+    }
+
+    @Transactional
+    public void deactivateUser(int userId) {
+        try (Session session = sessionFactory.openSession()) {
+            User user = session.get(User.class, userId);
+            if (user != null) {
+                user.setActive(false);
+                session.update(user);
+            } else {
+                throw new RuntimeException("User not found with ID: " + userId);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to deactivate user", e);
         }
     }
 }

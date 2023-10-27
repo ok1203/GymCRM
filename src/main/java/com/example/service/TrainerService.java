@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.exceptions.NotUpdatable;
 import com.example.model.Trainee;
 import com.example.model.Trainer;
 import com.example.model.Training;
@@ -32,9 +33,9 @@ public class TrainerService {
         return repository.get(id, username, password);
     }
 
-    public Trainer update(Trainer trainer, String username, String password) {
+    public Trainer update(Trainer trainer, String username, String password) throws NotUpdatable {
         if (get(trainer.getId(), username, password).isEmpty()) {
-            throw new NullPointerException("Trainer is null");
+            throw new NotUpdatable("Trainer is null");
         }
         return repository.update(trainer, username, password);
     }

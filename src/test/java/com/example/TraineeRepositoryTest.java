@@ -3,7 +3,6 @@ package com.example;
 import com.example.model.Trainee;
 import com.example.model.Training;
 import com.example.repo.TraineeRepository;
-import com.example.storage.StorageComponent;
 import com.example.storage.TraineeStorage;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;

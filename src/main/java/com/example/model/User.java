@@ -34,10 +34,10 @@ public class User {
     @Column(name = "is_active")
     private boolean isActive;
 
-    @OneToOne(mappedBy = "gymUser", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "gymUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Trainee trainee;
 
-    @OneToOne(mappedBy = "gymUser", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "gymUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Trainer trainer;
 
     public User(String firstName, String lastName, boolean isActive) {
