@@ -1,7 +1,6 @@
 package com.example.repo;
 
-import com.example.model.Training;
-import com.example.model.TrainingType;
+import com.example.entity.TrainingType;
 import com.example.storage.TrainingTypeStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

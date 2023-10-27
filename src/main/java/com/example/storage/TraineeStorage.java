@@ -1,8 +1,8 @@
 package com.example.storage;
 
-import com.example.model.Trainee;
-import com.example.model.Training;
-import com.example.model.User;
+import com.example.entity.Trainee;
+import com.example.entity.Training;
+import com.example.entity.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,9 +1,5 @@
 package com.example;
 
-import com.example.model.Trainee;
-import com.example.model.Trainer;
-import com.example.model.Training;
-import com.example.model.User;
 import com.example.service.TraineeService;
 import com.example.service.TrainerService;
 import com.example.service.TrainingService;
@@ -13,10 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.Date;
 
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);

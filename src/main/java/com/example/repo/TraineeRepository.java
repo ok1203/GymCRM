@@ -1,7 +1,7 @@
 package com.example.repo;
 
-import com.example.model.Trainee;
-import com.example.model.Training;
+import com.example.entity.Trainee;
+import com.example.entity.Training;
 import com.example.storage.TraineeStorage;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;

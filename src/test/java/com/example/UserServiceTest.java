@@ -1,6 +1,6 @@
 package com.example;
 
-import com.example.model.User;
+import com.example.entity.User;
 import com.example.repo.UserRepository;
 import com.example.service.UserService;
 import org.json.simple.parser.ParseException;

@@ -1,7 +1,7 @@
 package com.example;
 
-import com.example.model.Trainee;
-import com.example.model.Training;
+import com.example.entity.Trainee;
+import com.example.entity.Training;
 import com.example.repo.TraineeRepository;
 import com.example.service.TraineeService;
 import org.json.simple.parser.ParseException;

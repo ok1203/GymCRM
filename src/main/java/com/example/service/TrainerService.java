@@ -1,9 +1,9 @@
 package com.example.service;
 
-import com.example.exceptions.NotUpdatable;
-import com.example.model.Trainee;
-import com.example.model.Trainer;
-import com.example.model.Training;
+import com.example.exceptions.UnupdatableException;
+import com.example.entity.Trainee;
+import com.example.entity.Trainer;
+import com.example.entity.Training;
 import com.example.repo.TrainerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,9 +33,9 @@ public class TrainerService {
         return repository.get(id, username, password);
     }
 
-    public Trainer update(Trainer trainer, String username, String password) throws NotUpdatable {
+    public Trainer update(Trainer trainer, String username, String password) throws UnupdatableException {
         if (get(trainer.getId(), username, password).isEmpty()) {
-            throw new NotUpdatable("Trainer is null");
+            throw new UnupdatableException("Trainer is null");
         }
         return repository.update(trainer, username, password);
     }

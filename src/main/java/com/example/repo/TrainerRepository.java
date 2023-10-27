@@ -1,14 +1,12 @@
 package com.example.repo;
 
-import com.example.model.Trainee;
-import com.example.model.Trainer;
-import com.example.model.Training;
+import com.example.entity.Trainee;
+import com.example.entity.Trainer;
+import com.example.entity.Training;
 import com.example.storage.TrainerStorage;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 

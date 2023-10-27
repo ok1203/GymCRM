@@ -1,6 +1,6 @@
 package com.example;
 
-import com.example.model.Training;
+import com.example.entity.Training;
 import com.example.repo.TrainingRepository;
 import com.example.storage.TrainingStorage;
 import org.junit.jupiter.api.Test;

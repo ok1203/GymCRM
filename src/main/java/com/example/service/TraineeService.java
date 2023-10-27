@@ -1,9 +1,8 @@
 package com.example.service;
 
-import com.example.exceptions.NotUpdatable;
-import com.example.model.Trainee;
-import com.example.model.Training;
-import com.example.model.TrainingType;
+import com.example.exceptions.UnupdatableException;
+import com.example.entity.Trainee;
+import com.example.entity.Training;
 import com.example.repo.*;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +17,20 @@ import java.util.Optional;
 public class TraineeService {
 
     private TraineeRepository repository;
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private TrainingRepository trainingRepository;
-
-    @Autowired
     private TrainingTypeRepository trainingTypeRepository;
 
     @Autowired
-    public TraineeService(TraineeRepository traineeRepository) {
+    public TraineeService(TraineeRepository traineeRepositoryб,
+                          UserRepository userRepository,
+                          TraineeRepository traineeRepository,
+                          TrainingRepository trainingRepository,
+                          TrainingTypeRepository trainingTypeRepository) {
         repository = traineeRepository;
+        this.userRepository = userRepository;
+        this.trainingRepository = trainingRepository;
+        this.trainingTypeRepository = trainingTypeRepository;
     }
 
     public List<Trainee> list(String username, String password) throws IOException, ParseException {
@@ -55,9 +55,9 @@ public class TraineeService {
         repository.delete(id, username, password);
     }
 
-    public Trainee update(Trainee trainee, String username, String password) throws IOException, ParseException, NotUpdatable {
+    public Trainee update(Trainee trainee, String username, String password) throws IOException, ParseException, UnupdatableException {
         if (get(trainee.getId(), username, password).isEmpty()) {
-            throw new NotUpdatable("trainee is null");
+            throw new UnupdatableException("trainee is null");
         }
         return repository.update(trainee, username, password);
     }

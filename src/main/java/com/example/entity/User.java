@@ -1,4 +1,4 @@
-package com.example.model;
+package com.example.entity;
 
 import com.example.RandomStringGenerator;
 import org.springframework.lang.NonNull;

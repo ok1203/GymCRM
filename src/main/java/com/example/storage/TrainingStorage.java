@@ -1,6 +1,6 @@
 package com.example.storage;
 
-import com.example.model.Training;
+import com.example.entity.Training;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,6 @@
 package com.example.service;
 
-import com.example.model.Training;
-import com.example.model.User;
+import com.example.entity.User;
 import com.example.repo.UserRepository;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
