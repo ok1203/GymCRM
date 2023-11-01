@@ -62,19 +62,10 @@ public class TraineeService {
 
     @Transactional
     public Trainee update(Trainee trainee, String username, String password) throws IOException, ParseException, UnupdatableException {
-        Optional<Trainee> existingTraineeOptional = get(trainee.getId(), username, password);
-
-        if (existingTraineeOptional.isPresent()) {
-            Trainee existingTrainee = existingTraineeOptional.get();
-            // Update the existing Trainee with the new data
-            existingTrainee.setDateOfBirth(trainee.getDateOfBirth());
-            existingTrainee.setAddress(trainee.getAddress());
-            existingTrainee.setUserId(trainee.getUserId());
-
-            return repository.update(existingTrainee, username, password);
-        } else {
-            throw new UnupdatableException("Trainee not found.");
+        if (get(trainee.getId(), username, password).isEmpty()) {
+            throw new UnupdatableException("trainee is null");
         }
+        return repository.update(trainee, username, password);
     }
 
     public Optional<Trainee> getTraineeByUsername(String username, String password) {
