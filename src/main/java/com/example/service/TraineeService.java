@@ -4,6 +4,7 @@ import com.example.exceptions.UnupdatableException;
 import com.example.entity.Trainee;
 import com.example.entity.Training;
 import com.example.repo.*;
+import org.hibernate.SessionFactory;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,9 @@ import java.util.Optional;
 
 @Service
 public class TraineeService {
+
+    @Autowired
+    private SessionFactory sessionFactory;
 
     private TraineeRepository repository;
     private UserRepository userRepository;
@@ -37,6 +41,7 @@ public class TraineeService {
         return repository.findAll(username, password);
     }
 
+    @Transactional
     public Trainee create(Trainee trainee) {
         return repository.create(trainee);
     }
@@ -55,17 +60,28 @@ public class TraineeService {
         repository.delete(id, username, password);
     }
 
+    @Transactional
     public Trainee update(Trainee trainee, String username, String password) throws IOException, ParseException, UnupdatableException {
-        if (get(trainee.getId(), username, password).isEmpty()) {
-            throw new UnupdatableException("trainee is null");
+        Optional<Trainee> existingTraineeOptional = get(trainee.getId(), username, password);
+
+        if (existingTraineeOptional.isPresent()) {
+            Trainee existingTrainee = existingTraineeOptional.get();
+            // Update the existing Trainee with the new data
+            existingTrainee.setDateOfBirth(trainee.getDateOfBirth());
+            existingTrainee.setAddress(trainee.getAddress());
+            existingTrainee.setUserId(trainee.getUserId());
+
+            return repository.update(existingTrainee, username, password);
+        } else {
+            throw new UnupdatableException("Trainee not found.");
         }
-        return repository.update(trainee, username, password);
     }
 
     public Optional<Trainee> getTraineeByUsername(String username, String password) {
         return repository.getTraineeByUsername(username, password);
     }
 
+    @Transactional
     public void changeTraineePassword(int traineeId, String newPassword, String username, String password) {
         userRepository.changeUserPassword(repository.get(traineeId, username, password).get().getUserId(), newPassword);
     }
@@ -91,6 +107,7 @@ public class TraineeService {
         repository.delete(id, username, password);
     }
 
+    @Transactional
     public void addTrainingToTrainee(Trainee trainee, Training training, String username, String password) {
         repository.addTrainingToTrainee(trainee, training, username, password);
     }

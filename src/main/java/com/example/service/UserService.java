@@ -5,6 +5,7 @@ import com.example.repo.UserRepository;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
@@ -23,6 +24,7 @@ public class UserService {
         return repository.findAll();
     }
 
+    @Transactional
     public User create(User user) {
         return repository.create(user);
     }
@@ -31,6 +33,7 @@ public class UserService {
         return repository.get(1);
     }
 
+    @Transactional
     public void delete(int id) {
         repository.delete(id);
     }
