@@ -37,6 +37,7 @@ public class TraineeService {
         this.trainingTypeRepository = trainingTypeRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<Trainee> list(String username, String password) throws IOException, ParseException {
         return repository.findAll(username, password);
     }
@@ -46,6 +47,7 @@ public class TraineeService {
         return repository.create(trainee);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Trainee> get(int id, String username, String password) throws IOException, ParseException {
         return repository.get(id, username, password);
     }
@@ -68,6 +70,7 @@ public class TraineeService {
         return repository.update(trainee, username, password);
     }
 
+    @Transactional(readOnly = true)
     public Optional<Trainee> getTraineeByUsername(String username, String password) {
         return repository.getTraineeByUsername(username, password);
     }
@@ -103,6 +106,7 @@ public class TraineeService {
         repository.addTrainingToTrainee(trainee, training, username, password);
     }
 
+    @Transactional(readOnly = true)
     public List<Training> getTraineeTrainings(int traineeId, String username, String password) {
         return repository.getTraineeTrainings(traineeId, username, password);
     }

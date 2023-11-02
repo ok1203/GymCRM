@@ -20,6 +20,7 @@ public class UserService {
         repository = userRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<User> list() throws IOException, ParseException {
         return repository.findAll();
     }
@@ -29,6 +30,7 @@ public class UserService {
         return repository.create(user);
     }
 
+    @Transactional(readOnly = true)
     public Optional<User> get(int id) {
         return repository.get(1);
     }
