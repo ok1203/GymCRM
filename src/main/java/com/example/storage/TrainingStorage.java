@@ -20,56 +20,39 @@ public class TrainingStorage {
 
     public List<Training> getTrainingMap() {
         List<Training> trainings;
-        try (Session session = sessionFactory.openSession()) {
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaQuery<Training> criteriaQuery = criteriaBuilder.createQuery(Training.class);
-            Root<Training> root = criteriaQuery.from(Training.class);
-            criteriaQuery.select(root);
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Training> criteriaQuery = criteriaBuilder.createQuery(Training.class);
+        Root<Training> root = criteriaQuery.from(Training.class);
+        criteriaQuery.select(root);
 
-            trainings = session.createQuery(criteriaQuery).list();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to retrieve all trainings", e);
-        }
+        trainings = session.createQuery(criteriaQuery).list();
+
         return trainings;
     }
 
     public Optional<Training> getTraining(int trainingId) {
-        try (Session session = sessionFactory.openSession()) {
-            Training training = session.get(Training.class, trainingId);
-            return Optional.ofNullable(training);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to retrieve training by ID: " + trainingId, e);
-        }
+       Session session = sessionFactory.getCurrentSession();
+        Training training = session.get(Training.class, trainingId);
+        return Optional.ofNullable(training);
     }
 
-    @Transactional
     public Training createTraining(Training training) {
-        try (Session session = sessionFactory.openSession()) {
-            session.save(training);
-            return training;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create training", e);
-        }
+        Session session = sessionFactory.getCurrentSession();
+        session.save(training);
+        return training;
     }
 
-    @Transactional
     public void updateTraining(Training training) {
-        try (Session session = sessionFactory.openSession()) {
-            session.update(training);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to update training", e);
-        }
+        Session session = sessionFactory.getCurrentSession();
+        session.update(training);
     }
 
-    @Transactional
     public void deleteTraining(int trainingId) {
-        try (Session session = sessionFactory.openSession()) {
-            Training training = session.get(Training.class, trainingId);
-            if (training != null) {
-                session.delete(training);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to delete training by ID: " + trainingId, e);
+        Session session = sessionFactory.getCurrentSession();
+        Training training = session.get(Training.class, trainingId);
+        if (training != null) {
+            session.delete(training);
         }
     }
 }

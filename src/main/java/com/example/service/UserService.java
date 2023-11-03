@@ -32,7 +32,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Optional<User> get(int id) {
-        return repository.get(1);
+        return repository.get(id);
     }
 
     @Transactional

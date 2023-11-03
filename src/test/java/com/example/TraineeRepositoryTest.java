@@ -111,44 +111,6 @@ public class TraineeRepositoryTest {
     }
 
     @Test
-    public void testChangeTraineePassword() {
-        traineeRepository.changeTraineePassword(1, "newPassword", "username", "password");
-
-        verify(storageComponent).changeTraineePassword(1, "newPassword", "username", "password");
-    }
-
-    @Test
-    public void testActivateTrainee() {
-        traineeRepository.activateTrainee(1, "username", "password");
-
-        verify(storageComponent).activateTrainee(1, "username", "password");
-    }
-
-    @Test
-    public void testDeactivateTrainee() {
-        traineeRepository.deactivateTrainee(1, "username", "password");
-
-        verify(storageComponent).deactivateTrainee(1, "username", "password");
-    }
-
-    @Test
-    public void testDeleteTraineeByUsername() {
-        traineeRepository.deleteTraineeByUsername("username", "password");
-
-        verify(storageComponent).deleteTraineeByUsername("username", "password");
-    }
-
-    @Test
-    public void testAddTrainingToTrainee() {
-        Trainee trainee = new Trainee(new Date(2000, 11, 11), "Address1", 1);
-        Training training = new Training(1, 1, "Training1", 1, new Date(), 60);
-
-        traineeRepository.addTrainingToTrainee(trainee, training, "username", "password");
-
-        verify(storageComponent).addTrainingToTrainee(trainee, training, "username", "password");
-    }
-
-    @Test
     public void testGetTraineeTrainings() {
         List<Training> trainings = new ArrayList<>();
         Training training = new Training(1, 1, "Training1", 1, new Date(), 60);

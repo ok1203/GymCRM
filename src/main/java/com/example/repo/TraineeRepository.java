@@ -41,26 +41,6 @@ public class TraineeRepository {
         return storageComponent.getTraineeByUsername(username, password);
     }
 
-    public void changeTraineePassword(int traineeId, String newPassword, String username, String password) {
-        storageComponent.changeTraineePassword(traineeId, newPassword, username, password);
-    }
-
-    public void activateTrainee(int traineeId, String username, String password) {
-        storageComponent.activateTrainee(traineeId, username, password);
-    }
-
-    public void deactivateTrainee(int traineeId, String username, String password) {
-        storageComponent.deactivateTrainee(traineeId, username, password);
-    }
-
-    public void deleteTraineeByUsername(String username, String password) {
-        storageComponent.deleteTraineeByUsername(username, password);
-    }
-
-    public void addTrainingToTrainee(Trainee trainee, Training training, String username, String password) {
-        storageComponent.addTrainingToTrainee(trainee, training, username, password);
-    }
-
     public List<Training> getTraineeTrainings(int traineeId, String username, String password) {
         return storageComponent.getTraineeTrainings(traineeId, username, password);
     }

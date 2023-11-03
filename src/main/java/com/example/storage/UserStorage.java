@@ -29,7 +29,6 @@ public class UserStorage {
         criteriaQuery.select(root);
 
         users = session.createQuery(criteriaQuery).list();
-        session.close();
         return users;
     }
 

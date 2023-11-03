@@ -30,12 +30,6 @@ public class Trainer {
     )
     private Map<Integer, Trainee> trainees;
 
-    public Trainer(int id, int specializationId, int userId) {
-        this.id = id;
-        this.specializationId = specializationId;
-        this.userId = userId;
-    }
-
     public Trainer( int specializationId, int userId) {
         this.specializationId = specializationId;
         this.userId = userId;

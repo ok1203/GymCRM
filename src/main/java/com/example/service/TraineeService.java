@@ -4,7 +4,6 @@ import com.example.exceptions.UnupdatableException;
 import com.example.entity.Trainee;
 import com.example.entity.Training;
 import com.example.repo.*;
-import org.hibernate.SessionFactory;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +15,6 @@ import java.util.Optional;
 
 @Service
 public class TraineeService {
-
-    @Autowired
-    private SessionFactory sessionFactory;
 
     private TraineeRepository repository;
     private UserRepository userRepository;
@@ -58,8 +54,9 @@ public class TraineeService {
             trainingTypeRepository.delete(training.getTrainingTypeId());
             trainingRepository.delete(training.getId());
         }
-        userRepository.delete(repository.get(id, username, password).get().getUserId());
+        int userId = repository.get(id, username, password).get().getUserId();
         repository.delete(id, username, password);
+        userRepository.delete(userId);
     }
 
     @Transactional
@@ -97,13 +94,15 @@ public class TraineeService {
             trainingTypeRepository.delete(training.getTrainingTypeId());
             trainingRepository.delete(training.getId());
         }
-        userRepository.delete(repository.get(id, username, password).get().getUserId());
+        int userId = repository.get(id, username, password).get().getUserId();
         repository.delete(id, username, password);
+        userRepository.delete(userId);
     }
 
     @Transactional
     public void addTrainingToTrainee(Trainee trainee, Training training, String username, String password) {
-        repository.addTrainingToTrainee(trainee, training, username, password);
+        training.setTraineeId(trainee.getId());
+        trainingRepository.create(training);
     }
 
     @Transactional(readOnly = true)

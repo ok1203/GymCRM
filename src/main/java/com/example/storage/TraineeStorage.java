@@ -58,16 +58,8 @@ public class TraineeStorage {
     public Trainee updateTrainee(Trainee trainee, String username, String password) {
         Session session = sessionFactory.getCurrentSession();
         authenticateTrainee(username, password, session);
-        session.update(trainee);
-        return trainee;
-    }
-
-    public void changeTraineePassword(int traineeId, String newPassword, String username, String password) {
-        Session session = sessionFactory.getCurrentSession();
-        authenticateTrainee(username, password, session);
-        Trainee trainee = session.get(Trainee.class, traineeId);
-        trainee.getGym_user().setPassword(newPassword);
-        session.saveOrUpdate(trainee);
+        Trainee updatedTrainee = (Trainee) session.merge(trainee);
+        return updatedTrainee;
     }
 
     public void deleteTrainee(int traineeId, String username, String password) {
@@ -77,41 +69,6 @@ public class TraineeStorage {
         if (trainee != null) {
             session.delete(trainee);
         }
-    }
-
-    public void activateTrainee(int traineeId, String username, String password) {
-        Session session = sessionFactory.getCurrentSession();
-        authenticateTrainee(username, password, session);
-        Trainee trainee = session.get(Trainee.class, traineeId);
-        trainee.getGym_user().setActive(true);
-        session.saveOrUpdate(trainee);
-    }
-
-    public void deactivateTrainee(int traineeId, String username, String password) {
-        Session session = sessionFactory.getCurrentSession();
-        authenticateTrainee(username, password, session);
-        Trainee trainee = session.get(Trainee.class, traineeId);
-        trainee.getGym_user().setActive(false);
-        session.saveOrUpdate(trainee);
-    }
-
-    public void deleteTraineeByUsername(String username, String password) {
-        Session session = sessionFactory.getCurrentSession();
-        authenticateTrainee(username, password, session);
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaDelete<Trainee> delete = criteriaBuilder.createCriteriaDelete(Trainee.class);
-        Root<Trainee> root = delete.from(Trainee.class);
-        Join<Trainee, User> userJoin = root.join("gymUser");
-        delete.where(criteriaBuilder.equal(userJoin.get("userName"), username));
-
-        session.createQuery(delete).executeUpdate();
-    }
-
-    public void addTrainingToTrainee(Trainee trainee, Training training, String username, String password) {
-        Session session = sessionFactory.getCurrentSession();
-        authenticateTrainee(username, password, session);
-        training.setTraineeId(trainee.getId());
-        session.update(training);
     }
 
     public List<Training> getTraineeTrainings(int traineeId, String username, String password) {

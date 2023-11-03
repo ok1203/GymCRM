@@ -77,60 +77,14 @@ public class TrainerServiceTest {
     }
 
     @Test
-    public void testChangeTrainerPassword() {
-        int trainerId = 1;
-        String newPassword = "newPassword";
-        String username = "username";
-        String password = "password";
-
-        service.changeTrainerPassword(trainerId, newPassword, username, password);
-
-        verify(repository).changeTrainerPassword(trainerId, newPassword, username, password);
-    }
-
-    @Test
     public void testDeleteTrainer() {
         int trainerId = 1;
         String username = "username";
         String password = "password";
 
-        service.deleteTrainer(trainerId, username, password);
+        service.delete(trainerId, username, password);
 
         verify(repository).deleteTrainer(trainerId, username, password);
-    }
-
-    @Test
-    public void testActivateTrainer() {
-        int trainerId = 1;
-        String username = "username";
-        String password = "password";
-
-        service.activateTrainer(trainerId, username, password);
-
-        verify(repository).activateTrainer(trainerId, username, password);
-    }
-
-    @Test
-    public void testDeactivateTrainer() {
-        int trainerId = 1;
-        String username = "username";
-        String password = "password";
-
-        service.deactivateTrainer(trainerId, username, password);
-
-        verify(repository).deactivateTrainer(trainerId, username, password);
-    }
-
-    @Test
-    public void testAddTrainingToTrainer() {
-        Trainer trainer = new Trainer();
-        Training training = new Training();
-        String username = "username";
-        String password = "password";
-
-        service.addTrainingToTrainer(trainer, training, username, password);
-
-        verify(repository).addTrainingToTrainer(trainer, training, username, password);
     }
 
     @Test

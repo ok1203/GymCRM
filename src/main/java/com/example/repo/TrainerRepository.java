@@ -36,28 +36,12 @@ public class TrainerRepository {
         return storageComponent.getTrainerByUsername(username, password);
     }
 
-    public void changeTrainerPassword(int trainerId, String newPassword, String username, String password) {
-        storageComponent.changeTrainerPassword(trainerId, newPassword, username, password);
-    }
-
     public void deleteTrainer(int trainerId, String username, String password) {
         storageComponent.deleteTrainer(trainerId, username, password);
     }
 
-    public void activateTrainer(int trainerId, String username, String password) {
-        storageComponent.activateTrainer(trainerId, username, password);
-    }
-
-    public void deactivateTrainer(int trainerId, String username, String password) {
-        storageComponent.deactivateTrainer(trainerId, username, password);
-    }
-
     public List<Trainer> getNotAssignedActiveTrainersForTrainee(Trainee trainee, String username, String password) {
         return storageComponent.getNotAssignedActiveTrainersForTrainee(trainee, username, password);
-    }
-
-    public void addTrainingToTrainer(Trainer trainer, Training training, String username, String password) {
-        storageComponent.addTrainingToTrainer(trainer, training, username, password);
     }
 
     public List<Training> getTrainerTrainings(int trainerId, String username, String password) {

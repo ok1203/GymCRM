@@ -90,18 +90,6 @@ public class TraineeServiceTest {
     }
 
     @Test
-    public void testChangeTraineePassword() throws IOException, ParseException {
-        int traineeId = 1;
-        String newPassword = "newPassword";
-        String username = "username";
-        String password = "password";
-
-        service.changeTraineePassword(traineeId, newPassword, username, password);
-
-        verify(repository).changeTraineePassword(traineeId, newPassword, username, password);
-    }
-
-    @Test
     public void testDeleteTrainee() throws IOException, ParseException {
         int traineeId = 1;
         String username = "username";
@@ -110,50 +98,6 @@ public class TraineeServiceTest {
         service.delete(traineeId, username, password);
 
         verify(repository).delete(traineeId, username, password);
-    }
-
-    @Test
-    public void testActivateTrainee() throws IOException, ParseException {
-        int traineeId = 1;
-        String username = "username";
-        String password = "password";
-
-        service.activateTrainee(traineeId, username, password);
-
-        verify(repository).activateTrainee(traineeId, username, password);
-    }
-
-    @Test
-    public void testDeactivateTrainee() throws IOException, ParseException {
-        int traineeId = 1;
-        String username = "username";
-        String password = "password";
-
-        service.deactivateTrainee(traineeId, username, password);
-
-        verify(repository).deactivateTrainee(traineeId, username, password);
-    }
-
-    @Test
-    public void testDeleteTraineeByUsername() throws IOException, ParseException {
-        String username = "username";
-        String password = "password";
-
-        service.deleteTraineeByUsername(username, password);
-
-        verify(repository).deleteTraineeByUsername(username, password);
-    }
-
-    @Test
-    public void testAddTrainingToTrainee() throws IOException, ParseException {
-        Trainee trainee = new Trainee();
-        Training training = new Training();
-        String username = "username";
-        String password = "password";
-
-        service.addTrainingToTrainee(trainee, training, username, password);
-
-        verify(repository).addTrainingToTrainee(trainee, training, username, password);
     }
 
     @Test

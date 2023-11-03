@@ -30,7 +30,7 @@ public class TrainerRepositoryTest {
     @Test
     public void testFindAll() {
         List<Trainer> trainers = new ArrayList<>();
-        Trainer trainer1 = new Trainer(1, 1, 1);
+        Trainer trainer1 = new Trainer(1, 1);
         trainers.add(trainer1);
 
         when(storageComponent.getTrainerMap("username", "password")).thenReturn(trainers);
@@ -44,65 +44,58 @@ public class TrainerRepositoryTest {
 
     @Test
     public void testCreate() {
-        Trainer trainer = new Trainer(1, 1, 1);
+        Trainer trainer = new Trainer(1, 1);
 
         when(storageComponent.createTrainer(any(Trainer.class))).thenReturn(trainer);
 
         Trainer result = trainerRepository.create(trainer);
 
         assertNotNull(result);
-        assertEquals(1, result.getId());
+        assertEquals(0, result.getId());
         assertEquals(1, result.getSpecializationId());
         assertEquals(1, result.getUserId());
     }
 
     @Test
     public void testGet() {
-        Trainer trainer = new Trainer(1, 1, 1);
+        Trainer trainer = new Trainer(1, 1);
 
         when(storageComponent.getTrainer(1, "username", "password")).thenReturn(Optional.of(trainer));
 
         Optional<Trainer> result = trainerRepository.get(1, "username", "password");
 
         assertNotNull(result);
-        assertEquals(1, result.get().getId());
+        assertEquals(0, result.get().getId());
         assertEquals(1, result.get().getSpecializationId());
         assertEquals(1, result.get().getUserId());
     }
 
     @Test
     public void testUpdate() {
-        Trainer trainer = new Trainer(1, 1, 1);
+        Trainer trainer = new Trainer(1, 1);
 
         when(storageComponent.updateTrainer(trainer, "username", "password")).thenReturn(trainer);
 
         Trainer result = trainerRepository.update(trainer, "username", "password");
 
         assertNotNull(result);
-        assertEquals(1, result.getId());
+        assertEquals(0, result.getId());
         assertEquals(1, result.getSpecializationId());
         assertEquals(1, result.getUserId());
     }
 
     @Test
     public void testGetTrainerByUsername() {
-        Trainer trainer = new Trainer(1, 1, 1);
+        Trainer trainer = new Trainer(1, 1);
 
         when(storageComponent.getTrainerByUsername("username", "password")).thenReturn(Optional.of(trainer));
 
         Optional<Trainer> result = trainerRepository.getTrainerByUsername("username", "password");
 
         assertNotNull(result);
-        assertEquals(1, result.get().getId());
+        assertEquals(0, result.get().getId());
         assertEquals(1, result.get().getSpecializationId());
         assertEquals(1, result.get().getUserId());
-    }
-
-    @Test
-    public void testChangeTrainerPassword() {
-        trainerRepository.changeTrainerPassword(1, "newPassword", "username", "password");
-
-        verify(storageComponent).changeTrainerPassword(1, "newPassword", "username", "password");
     }
 
     @Test
@@ -113,23 +106,9 @@ public class TrainerRepositoryTest {
     }
 
     @Test
-    public void testActivateTrainer() {
-        trainerRepository.activateTrainer(1, "username", "password");
-
-        verify(storageComponent).activateTrainer(1, "username", "password");
-    }
-
-    @Test
-    public void testDeactivateTrainer() {
-        trainerRepository.deactivateTrainer(1, "username", "password");
-
-        verify(storageComponent).deactivateTrainer(1, "username", "password");
-    }
-
-    @Test
     public void testGetNotAssignedActiveTrainersForTrainee() {
         List<Trainer> trainers = new ArrayList<>();
-        Trainer trainer1 = new Trainer(1, 1, 1);
+        Trainer trainer1 = new Trainer(1, 1);
         trainers.add(trainer1);
 
         Trainee trainee = new Trainee(new Date(2000, 11, 11), "Address1", 1);
@@ -141,16 +120,6 @@ public class TrainerRepositoryTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(trainer1, result.get(0));
-    }
-
-    @Test
-    public void testAddTrainingToTrainer() {
-        Trainer trainer = new Trainer(1, 1, 1);
-        Training training = new Training(1, 1, "Training1", 1, new Date(), 60);
-
-        trainerRepository.addTrainingToTrainer(trainer, training, "username", "password");
-
-        verify(storageComponent).addTrainingToTrainer(trainer, training, "username", "password");
     }
 
     @Test
