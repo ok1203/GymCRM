@@ -4,12 +4,10 @@ import com.example.exceptions.UnupdatableException;
 import com.example.entity.Trainee;
 import com.example.entity.Training;
 import com.example.repo.*;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +32,7 @@ public class TraineeService {
     }
 
     @Transactional(readOnly = true)
-    public List<Trainee> list(String username, String password) throws IOException, ParseException {
+    public List<Trainee> list(String username, String password) {
         return repository.findAll(username, password);
     }
 
@@ -44,12 +42,12 @@ public class TraineeService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Trainee> get(int id, String username, String password) throws IOException, ParseException {
+    public Optional<Trainee> get(int id, String username, String password) {
         return repository.get(id, username, password);
     }
 
     @Transactional
-    public void delete(int id, String username, String password) throws IOException, ParseException {
+    public void delete(int id, String username, String password) {
         for (Training training : repository.getTraineeTrainings(id, username, password)) {
             trainingTypeRepository.delete(training.getTrainingTypeId());
             trainingRepository.delete(training.getId());
@@ -60,7 +58,7 @@ public class TraineeService {
     }
 
     @Transactional
-    public Trainee update(Trainee trainee, String username, String password) throws IOException, ParseException, UnupdatableException {
+    public Trainee update(Trainee trainee, String username, String password) throws UnupdatableException {
         if (get(trainee.getId(), username, password).isEmpty()) {
             throw new UnupdatableException("trainee is null");
         }
@@ -108,5 +106,10 @@ public class TraineeService {
     @Transactional(readOnly = true)
     public List<Training> getTraineeTrainings(int traineeId, String username, String password) {
         return repository.getTraineeTrainings(traineeId, username, password);
+    }
+
+    @Transactional(readOnly = true)
+    public void authenticateTrainee(String username, String password) {
+        repository.authenticateTrainee(username, password);
     }
 }

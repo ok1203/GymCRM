@@ -1,23 +1,56 @@
 package com.example.repo;
 
 import com.example.entity.TrainingType;
-import com.example.storage.TrainingTypeStorage;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class TrainingTypeRepository {
 
     @Autowired
-    private TrainingTypeStorage storageComponent;
+    private SessionFactory sessionFactory;
 
     public List<TrainingType> findAll() {
-        return storageComponent.getTrainingTypeMap();
+        List<TrainingType> trainingTypes;
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<TrainingType> criteriaQuery = criteriaBuilder.createQuery(TrainingType.class);
+        Root<TrainingType> root = criteriaQuery.from(TrainingType.class);
+        criteriaQuery.select(root);
+
+        trainingTypes = session.createQuery(criteriaQuery).list();
+        return trainingTypes;
+    }
+
+    public Optional<TrainingType> get(int id) {
+        Session session = sessionFactory.getCurrentSession();
+        TrainingType trainingType = session.get(TrainingType.class, id);
+        return Optional.ofNullable(trainingType);
+    }
+
+    public void create(TrainingType trainingType) {
+        Session session = sessionFactory.getCurrentSession();
+        session.save(trainingType);
+    }
+
+    public void update(TrainingType trainingType) {
+        Session session = sessionFactory.getCurrentSession();
+        session.update(trainingType);
     }
 
     public void delete(int id) {
-        storageComponent.deleteTrainingType(id);
+        Session session = sessionFactory.getCurrentSession();
+        TrainingType trainingType = session.get(TrainingType.class, id);
+        if (trainingType != null) {
+            session.delete(trainingType);
+        }
     }
 }

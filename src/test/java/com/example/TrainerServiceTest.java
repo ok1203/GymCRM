@@ -84,7 +84,7 @@ public class TrainerServiceTest {
 
         service.delete(trainerId, username, password);
 
-        verify(repository).deleteTrainer(trainerId, username, password);
+        verify(repository).delete(trainerId, username, password);
     }
 
     @Test

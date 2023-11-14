@@ -2,12 +2,10 @@ package com.example.service;
 
 import com.example.entity.User;
 import com.example.repo.UserRepository;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -21,7 +19,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> list() throws IOException, ParseException {
+    public List<User> list() {
         return repository.findAll();
     }
 

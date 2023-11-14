@@ -70,7 +70,7 @@ public class TrainerService {
             trainingTypeRepository.delete(training.getTrainingTypeId());
             trainingRepository.delete(training.getId());
         }
-        repository.deleteTrainer(trainerId, username, password);
+        repository.delete(trainerId, username, password);
     }
 
     @Transactional
@@ -97,5 +97,10 @@ public class TrainerService {
     @Transactional(readOnly = true)
     public List<Training> getTrainerTrainings(int trainerId, String username, String password) {
         return repository.getTrainerTrainings(trainerId, username, password);
+    }
+
+    @Transactional(readOnly = true)
+    public void authenticateTrainer(String username, String password) {
+        repository.authenticateTrainer(username, password);
     }
 }
