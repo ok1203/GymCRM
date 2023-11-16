@@ -20,8 +20,7 @@ public class TraineeService {
     private TrainingTypeRepository trainingTypeRepository;
 
     @Autowired
-    public TraineeService(TraineeRepository traineeRepositoryб,
-                          UserRepository userRepository,
+    public TraineeService(UserRepository userRepository,
                           TraineeRepository traineeRepository,
                           TrainingRepository trainingRepository,
                           TrainingTypeRepository trainingTypeRepository) {
