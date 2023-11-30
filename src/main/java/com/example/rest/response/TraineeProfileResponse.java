@@ -1,4 +1,4 @@
-package com.example.rest;
+package com.example.rest.response;
 
 import com.example.entity.Trainee;
 import com.example.entity.Trainer;

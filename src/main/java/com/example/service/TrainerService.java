@@ -1,16 +1,22 @@
 package com.example.service;
 
+import com.example.entity.User;
 import com.example.exceptions.UnupdatableException;
 import com.example.entity.Trainee;
 import com.example.entity.Trainer;
 import com.example.entity.Training;
 import com.example.repo.*;
+import com.example.rest.request.TrainerUpdateRequest;
+import com.example.rest.request.TrainingGetRequest;
+import com.example.rest.response.TrainingResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TrainerService {
@@ -19,16 +25,19 @@ public class TrainerService {
     private UserRepository userRepository;
     private TrainingRepository trainingRepository;
     private TrainingTypeRepository trainingTypeRepository;
+    private TraineeRepository traineeRepository;
 
     @Autowired
     public TrainerService(TrainerRepository trainerRepository,
                           UserRepository userRepository,
                           TrainingRepository trainingRepository,
-                          TrainingTypeRepository trainingTypeRepository) {
+                          TrainingTypeRepository trainingTypeRepository,
+                          TraineeRepository traineeRepository) {
         repository = trainerRepository;
         this.userRepository = userRepository;
         this.trainingRepository = trainingRepository;
         this.trainingTypeRepository = trainingTypeRepository;
+        this.traineeRepository = traineeRepository;
     }
 
     @Transactional(readOnly = true)
@@ -47,11 +56,16 @@ public class TrainerService {
     }
 
     @Transactional
-    public Trainer update(Trainer trainer, String username, String password) throws UnupdatableException {
-        if (get(trainer.getId(), username, password).isEmpty()) {
-            throw new UnupdatableException("Trainer is null");
-        }
-        return repository.update(trainer, username, password);
+    public Trainer update(TrainerUpdateRequest request) throws UnupdatableException {
+        Trainer trainer = getTrainerByUsername(request.getUsername(), "").orElseThrow(() -> new UnupdatableException("Trainer is null"));
+
+        trainer.setSpecializationId(request.getSpecializationId());
+        User user = trainer.getGym_user();
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setActive(request.getActive());
+
+        return repository.update(trainer);
     }
 
     @Transactional(readOnly = true)
@@ -66,7 +80,7 @@ public class TrainerService {
 
     @Transactional
     public void delete(int trainerId, String username, String password) {
-        for (Training training : repository.getTrainerTrainings(trainerId, username, password)) {
+        for (Training training : repository.getTrainerTrainings(trainerId)) {
             trainingTypeRepository.delete(training.getTrainingTypeId());
             trainingRepository.delete(training.getId());
         }
@@ -74,18 +88,33 @@ public class TrainerService {
     }
 
     @Transactional
-    public void activateTrainer(int trainerId, String username, String password) {
-        userRepository.activateUser(repository.get(trainerId, username, password).get().getUserId());
+    public void activateTrainer(int trainerId) {
+        userRepository.activateUser(repository.get(trainerId, "", "").get().getUserId());
     }
 
     @Transactional
-    public void deactivateTrainer(int trainerId, String username, String password) {
-        userRepository.deactivateUser(repository.get(trainerId, username, password).get().getUserId());
+    public void deactivateTrainer(int trainerId) {
+        userRepository.deactivateUser(repository.get(trainerId, "", "").get().getUserId());
+    }
+
+    @Transactional
+    public void changeStatus(String username, Boolean status) {
+        Trainer trainer = getTrainerByUsername(username, "").orElseThrow(() -> new RuntimeException("Trainer not found"));
+        if (status) {
+            activateTrainer(trainer.getId());
+        } else {
+            deactivateTrainer(trainer.getId());
+        }
     }
 
     @Transactional(readOnly = true)
-    public List<Trainer> getNotAssignedActiveTrainersForTrainee(Trainee trainee, String username, String password) {
-        return repository.getNotAssignedActiveTrainersForTrainee(trainee, username, password);
+    public List<Trainer> getNotAssignedActiveTrainersForTrainee(String username) {
+        Trainee trainee = traineeRepository.getTraineeByUsername(username, "").orElseThrow(() -> new UnupdatableException("Trainer is null"));
+        List<Trainer> list = repository.getNotAssignedTrainersForTrainee(trainee)
+                .stream()
+                .filter(trainer -> trainer.getGym_user().isActive())
+                .collect(Collectors.toList());
+        return list;
     }
 
     @Transactional
@@ -95,12 +124,40 @@ public class TrainerService {
     }
 
     @Transactional(readOnly = true)
-    public List<Training> getTrainerTrainings(int trainerId, String username, String password) {
-        return repository.getTrainerTrainings(trainerId, username, password);
+    public List<TrainingResponse> getTrainerTrainings(TrainingGetRequest request) {
+        Trainer trainer = getTrainerByUsername(request.getUsername(), "").orElseThrow(()-> new RuntimeException("Trainer not found"));
+        List<Training> list = repository.getTrainerTrainings(trainer.getId());
+
+        if (request.getFromDate() != null)
+            list = list
+                    .stream()
+                    .filter(training -> training.getDate().after(request.getFromDate()))
+                    .collect(Collectors.toList());
+        if (request.getToDate() != null)
+            list = list
+                    .stream()
+                    .filter(training -> training.getDate().before(request.getToDate()))
+                    .collect(Collectors.toList());
+        if (request.getTraineeName() != null)
+            list = list
+                    .stream()
+                    .filter(training -> training.getTrainee().getGym_user().getUserName().equals(request.getTraineeName()))
+                    .collect(Collectors.toList());
+
+        List<TrainingResponse> responseList = new ArrayList<>();
+        for (Training training: list) {
+            TrainingResponse trainingResponse = new TrainingResponse(training,
+                    trainingTypeRepository.get(training.getTrainingTypeId()).get().getTypeName(),
+                    training.getTrainee().getGym_user().getUserName());
+            responseList.add(trainingResponse);
+        }
+
+        return responseList;
     }
 
     @Transactional(readOnly = true)
     public void authenticateTrainer(String username, String password) {
         repository.authenticateTrainer(username, password);
     }
+
 }

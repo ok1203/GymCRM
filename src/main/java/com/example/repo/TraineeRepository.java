@@ -1,6 +1,7 @@
 package com.example.repo;
 
 import com.example.entity.Trainee;
+import com.example.entity.Trainer;
 import com.example.entity.Training;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,7 +23,7 @@ public class TraineeRepository {
 
     public List<Trainee> findAll(String username, String password) {
         Session session = sessionFactory.getCurrentSession();
-        authenticateTrainee(username, password);
+        //authenticateTrainee(username, password);
         List<Trainee> trainees;
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Trainee> criteriaQuery = criteriaBuilder.createQuery(Trainee.class);
@@ -41,14 +42,13 @@ public class TraineeRepository {
 
     public Optional<Trainee> get(int id, String username, String password) {
         Session session = sessionFactory.getCurrentSession();
-        authenticateTrainee(username, password);
+        //authenticateTrainee(username, password);
         Trainee trainee = session.get(Trainee.class, id);
         return Optional.ofNullable(trainee);
     }
 
-    public Trainee update(Trainee trainee, String username, String password){
+    public Trainee update(Trainee trainee){
         Session session = sessionFactory.getCurrentSession();
-        authenticateTrainee(username, password);
         Trainee updatedTrainee = (Trainee) session.merge(trainee);
         return updatedTrainee;
 
@@ -56,7 +56,7 @@ public class TraineeRepository {
 
     public void delete(int id, String username, String password) {
         Session session = sessionFactory.getCurrentSession();
-        authenticateTrainee(username, password);
+        //authenticateTrainee(username, password);
         Trainee trainee = session.get(Trainee.class, id);
         if (trainee != null) {
             session.delete(trainee);
@@ -65,7 +65,7 @@ public class TraineeRepository {
 
     public Optional<Trainee> getTraineeByUsername(String username, String password) {
         Session session = sessionFactory.getCurrentSession();
-        authenticateTrainee(username, password);
+        //authenticateTrainee(username, password);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Trainee> criteriaQuery = criteriaBuilder.createQuery(Trainee.class);
         Root<Trainee> root = criteriaQuery.from(Trainee.class);
@@ -74,9 +74,9 @@ public class TraineeRepository {
         return Optional.ofNullable(trainee);
     }
 
-    public List<Training> getTraineeTrainings(int traineeId, String username, String password) {
+    public List<Training> getTraineeTrainings(int traineeId) {
         Session session = sessionFactory.getCurrentSession();
-        authenticateTrainee(username, password);
+        //authenticateTrainee(username, password);
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Training> criteriaQuery = criteriaBuilder.createQuery(Training.class);
         Root<Training> trainingRoot = criteriaQuery.from(Training.class);
@@ -102,6 +102,22 @@ public class TraineeRepository {
 
         if (trainees.isEmpty()) { // Authentication succeeds if the query returns any results.
             throw new SecurityException("Authentication failed for user: " + username);
+        }
+    }
+
+    public void addTrainersToTrainee(int traineeId, List<Trainer> trainersToAdd) {
+        Session session = sessionFactory.getCurrentSession();
+
+        Trainee trainee = session.get(Trainee.class, traineeId);
+
+        if (trainee != null) {
+            List<Trainer> existingTrainers = trainee.getTrainers();
+            existingTrainers.addAll(trainersToAdd);
+            trainee.setTrainers(existingTrainers);
+
+            session.saveOrUpdate(trainee);
+        } else {
+            throw new IllegalArgumentException("Trainee with ID " + traineeId + " not found.");
         }
     }
 }

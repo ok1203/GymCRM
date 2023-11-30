@@ -1,4 +1,4 @@
-package com.example.rest;
+package com.example.rest.response;
 
 import com.example.entity.Trainee;
 import com.example.entity.Trainer;
@@ -10,15 +10,15 @@ public class TrainerProfileResponse {
     private String username;
     private String firstName;
     private String lastName;
-    private String specialization;
+    private int specializationId;
     private boolean isActive;
     private List<Trainee> trainees;
 
-    public TrainerProfileResponse(String username, String firstName, String lastName, String specialization, boolean isActive, List<Trainee> trainees) {
+    public TrainerProfileResponse(String username, String firstName, String lastName, int specializationId, boolean isActive, List<Trainee> trainees) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.specialization = specialization;
+        this.specializationId = specializationId;
         this.isActive = isActive;
         this.trainees = trainees;
     }
@@ -55,12 +55,12 @@ public class TrainerProfileResponse {
         this.lastName = lastName;
     }
 
-    public String getSpecialization() {
-        return specialization;
+    public int getSpecializationId() {
+        return specializationId;
     }
 
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
+    public void setSpecializationId(int specializationId) {
+        this.specializationId = specializationId;
     }
 
     public boolean isActive() {

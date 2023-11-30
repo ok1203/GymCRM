@@ -1,7 +1,7 @@
 package com.example.entity;
 
 import javax.persistence.*;
-import java.util.Map;
+import java.util.List;
 
 @Entity
 @Table(name = "trainer")
@@ -18,17 +18,17 @@ public class Trainer {
     @Column(name = "user_id")
     private int userId;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", insertable = false, updatable = false  )
     private User gymUser;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "trainer_trainee",
             joinColumns = @JoinColumn(name = "trainer_id"),
             inverseJoinColumns = @JoinColumn(name = "trainee_id")
     )
-    private Map<Integer, Trainee> trainees;
+    private List<Trainee> trainees;
 
     public Trainer( int specializationId, int userId) {
         this.specializationId = specializationId;
@@ -61,6 +61,14 @@ public class Trainer {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public List<Trainee> getTrainees() {
+        return trainees;
+    }
+
+    public void setTrainees(List<Trainee> trainees) {
+        this.trainees = trainees;
     }
 
     @Override

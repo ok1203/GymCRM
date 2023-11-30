@@ -232,5 +232,7 @@ public class Main {
 //                        getUserId()).
 //                toString());
 
+
+//        log.info(service2.getNotAssignedActiveTrainersForTrainee("AAAAA.AAAAA").toString());
     }
 }

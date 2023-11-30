@@ -36,9 +36,20 @@ public class TrainingTypeRepository {
         return Optional.ofNullable(trainingType);
     }
 
-    public void create(TrainingType trainingType) {
+    public Optional<TrainingType> getByName(String name) {
+        Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<TrainingType> criteriaQuery = criteriaBuilder.createQuery(TrainingType.class);
+        Root<TrainingType> root = criteriaQuery.from(TrainingType.class);
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("typeName"), name));
+        TrainingType trainingType = session.createQuery(criteriaQuery).uniqueResult();
+        return Optional.ofNullable(trainingType);
+    }
+
+    public TrainingType create(TrainingType trainingType) {
         Session session = sessionFactory.getCurrentSession();
         session.save(trainingType);
+        return trainingType;
     }
 
     public void update(TrainingType trainingType) {

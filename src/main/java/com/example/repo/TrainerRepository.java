@@ -22,7 +22,7 @@ public class TrainerRepository {
     private SessionFactory sessionFactory;
 
     public List<Trainer> findAll(String username, String password) {
-        authenticateTrainer(username, password);
+        //authenticateTrainer(username, password);
         List<Trainer> trainers;
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -42,21 +42,21 @@ public class TrainerRepository {
     }
 
     public Optional<Trainer> get(int id, String username, String password) {
-        authenticateTrainer(username, password);
+        //authenticateTrainer(username, password);
         Session session = sessionFactory.getCurrentSession();
         Trainer trainer = session.get(Trainer.class, id);
         return Optional.ofNullable(trainer);
     }
 
-    public Trainer update(Trainer trainer, String username, String password) {
-        authenticateTrainer(username, password);
+    public Trainer update(Trainer trainer) {
+        //authenticateTrainer(username, password);
         Session session = sessionFactory.getCurrentSession();
         Trainer updatedTrainer = (Trainer) session.merge(trainer);
         return updatedTrainer;
     }
 
     public Optional<Trainer> getTrainerByUsername(String username, String password) {
-        authenticateTrainer(username, password);
+        //authenticateTrainer(username, password);
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
@@ -68,31 +68,28 @@ public class TrainerRepository {
     }
 
     public void delete(int id, String username, String password) {
-        authenticateTrainer(username, password);
+        //authenticateTrainer(username, password);
         Session session = sessionFactory.getCurrentSession();
         Trainer trainer = session.get(Trainer.class, id);
         session.delete(trainer);
     }
 
-    public List<Trainer> getNotAssignedActiveTrainersForTrainee(Trainee trainee, String username, String password) {
-        authenticateTrainer(username, password);
+    public List<Trainer> getNotAssignedTrainersForTrainee(Trainee trainee) {
+        //authenticateTrainer(username, password);
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
         Root<Trainer> root = criteriaQuery.from(Trainer.class);
 
         criteriaQuery.select(root).where(
-                criteriaBuilder.and(
-                        criteriaBuilder.equal(root.get("isActive"), true),
-                        criteriaBuilder.not(criteriaBuilder.isMember(trainee, root.get("trainees")))
-                )
+                criteriaBuilder.not(criteriaBuilder.isMember(trainee, root.get("trainees")))
         );
 
         return session.createQuery(criteriaQuery).list();
     }
 
-    public List<Training> getTrainerTrainings(int trainerId, String username, String password) {
-        authenticateTrainer(username, password);
+    public List<Training> getTrainerTrainings(int trainerId) {
+        //authenticateTrainer(username, password);
         Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
         CriteriaQuery<Training> criteriaQuery = criteriaBuilder.createQuery(Training.class);

@@ -1,9 +1,14 @@
-package com.example.rest;
+package com.example.rest.request;
+
+import javax.validation.constraints.NotNull;
 
 public class TrainerRegistrationRequest {
 
+    @NotNull
     private String firstName;
+    @NotNull
     private String lastName;
+    @NotNull
     private int specializationId;
 
     public TrainerRegistrationRequest() {
