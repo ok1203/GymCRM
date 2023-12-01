@@ -37,27 +37,15 @@ public class TraineeRestController {
     @Autowired
     private UserService userService;
 
+    //1. Trainee Registration (POST method)
     @ApiOperation(value = "Trainee Registration", response = Map.class)
     @PostMapping("/registration")
     public ResponseEntity<Map<String, String>> traineeRegistration(@Valid @RequestBody TraineeRegistrationRequest request) {
-        // Validate required fields
-        if (!StringUtils.hasText(request.getFirstName()) || !StringUtils.hasText(request.getLastName())) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "First Name and Last Name are required"));
-        }
-
-        User user = new User(request.getFirstName(), request.getLastName(), true); // Assuming isActive is set to true
-        userService.create(user);
-
-
-        Trainee trainee = new Trainee();
-        trainee.setDateOfBirth(request.getDateOfBirth());
-        trainee.setAddress(request.getAddress());
-        trainee.setUserId(user.getId());
-        traineeService.create(trainee);
+        Trainee trainee = traineeService.create(request);
 
         Map<String, String> response = new HashMap<>();
-        response.put("Username", user.getUserName());
-        response.put("Password", user.getPassword());
+        response.put("Username", userService.get(trainee.getUserId()).get().getUserName());
+        response.put("Password", userService.get(trainee.getUserId()).get().getPassword());
 
         return ResponseEntity.ok(response);
     }

@@ -1,7 +1,6 @@
 package com.example.rest;
 
 import com.example.entity.Trainer;
-import com.example.entity.User;
 import com.example.rest.request.TrainerRegistrationRequest;
 import com.example.rest.request.TrainerUpdateRequest;
 import com.example.rest.request.TrainingGetRequest;
@@ -14,11 +13,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,24 +35,11 @@ public class TrainerRestController {
     @ApiOperation(value = "Trainer Registration", response = Map.class)
     @PostMapping("/registration")
     public ResponseEntity<Map<String, String>> trainerRegistration(@Valid @RequestBody TrainerRegistrationRequest request) {
-        // Validate required fields
-        if (!StringUtils.hasText(request.getFirstName()) || !StringUtils.hasText(request.getLastName())
-                || request.getSpecializationId() <= 0) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "First Name, Last Name, and Specialization are required"));
-        }
-
-        User user = new User(request.getFirstName(), request.getLastName(), true);
-        userService.create(user);
-
-
-        Trainer trainer = new Trainer();
-        trainer.setSpecializationId(request.getSpecializationId());
-        trainer.setUserId(user.getId());
-        trainerService.create(trainer);
+        Trainer trainer = trainerService.create(request);
 
         Map<String, String> response = new HashMap<>();
-        response.put("Username", user.getUserName());
-        response.put("Password", user.getPassword());
+        response.put("Username", userService.get(trainer.getUserId()).get().getUserName());
+        response.put("Password", userService.get(trainer.getUserId()).get().getPassword());
 
         return ResponseEntity.ok(response);
     }

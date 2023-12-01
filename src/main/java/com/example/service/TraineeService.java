@@ -6,6 +6,7 @@ import com.example.exceptions.UnupdatableException;
 import com.example.entity.Trainee;
 import com.example.entity.Training;
 import com.example.repo.*;
+import com.example.rest.request.TraineeRegistrationRequest;
 import com.example.rest.request.TraineeUpdateRequest;
 import com.example.rest.request.TrainingGetRequest;
 import com.example.rest.response.TrainingResponse;
@@ -46,7 +47,15 @@ public class TraineeService {
     }
 
     @Transactional
-    public Trainee create(Trainee trainee) {
+    public Trainee create(TraineeRegistrationRequest request) {
+        User user = new User(request.getFirstName(), request.getLastName(), true); // Assuming isActive is set to true
+        userRepository.create(user);
+
+        Trainee trainee = new Trainee();
+        trainee.setDateOfBirth(request.getDateOfBirth());
+        trainee.setAddress(request.getAddress());
+        trainee.setUserId(user.getId());
+
         return repository.create(trainee);
     }
 

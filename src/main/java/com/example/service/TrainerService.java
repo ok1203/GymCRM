@@ -6,6 +6,7 @@ import com.example.entity.Trainee;
 import com.example.entity.Trainer;
 import com.example.entity.Training;
 import com.example.repo.*;
+import com.example.rest.request.TrainerRegistrationRequest;
 import com.example.rest.request.TrainerUpdateRequest;
 import com.example.rest.request.TrainingGetRequest;
 import com.example.rest.response.TrainingResponse;
@@ -46,7 +47,14 @@ public class TrainerService {
     }
 
     @Transactional
-    public Trainer create(Trainer trainer) {
+    public Trainer create(TrainerRegistrationRequest request) {
+        User user = new User(request.getFirstName(), request.getLastName(), true);
+        userRepository.create(user);
+
+        Trainer trainer = new Trainer();
+        trainer.setSpecializationId(request.getSpecializationId());
+        trainer.setUserId(user.getId());
+
         return repository.create(trainer);
     }
 
