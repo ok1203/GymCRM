@@ -4,7 +4,6 @@ import com.example.entity.Trainee;
 import com.example.entity.Training;
 import com.example.repo.TraineeRepository;
 import com.example.service.TraineeService;
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,61 +27,61 @@ public class TraineeServiceTest {
     private TraineeService service;
 
     @Test
-    public void testGetId() throws IOException, ParseException {
+    public void testGetId() {
         int expectedId = 1;
         Trainee trainee = new Trainee();
         trainee.setId(expectedId);
 
-        when(repository.get(expectedId, "username", "password")).thenReturn(Optional.of(trainee));
+        when(repository.get(expectedId)).thenReturn(Optional.of(trainee));
         int actualId = service.get(expectedId, "username", "password").get().getId();
 
         assertEquals(expectedId, actualId);
     }
 
     @Test
-    public void testGetDateOfBirth() throws IOException, ParseException {
+    public void testGetDateOfBirth() {
         Date expectedDate = new Date(100, 10, 11); // Adjust year format (e.g., 2000 to 100)
         Trainee trainee = new Trainee();
         trainee.setDateOfBirth(expectedDate);
 
-        when(repository.get(1, "username", "password")).thenReturn(Optional.of(trainee));
+        when(repository.get(1)).thenReturn(Optional.of(trainee));
         Date actualDate = service.get(1, "username", "password").get().getDateOfBirth();
 
         assertEquals(expectedDate, actualDate);
     }
 
     @Test
-    public void testGetAddress() throws IOException, ParseException {
+    public void testGetAddress() {
         String expectedAddr = "Backer St. 221b";
         Trainee trainee = new Trainee();
         trainee.setAddress(expectedAddr);
 
-        when(repository.get(1, "username", "password")).thenReturn(Optional.of(trainee));
+        when(repository.get(1)).thenReturn(Optional.of(trainee));
         String actualAddr = service.get(1, "username", "password").get().getAddress();
 
         assertEquals(expectedAddr, actualAddr);
     }
 
     @Test
-    public void testGetUserId() throws IOException, ParseException {
+    public void testGetUserId() {
         int expectedUserId = 3;
         Trainee trainee = new Trainee();
         trainee.setUserId(expectedUserId);
 
-        when(repository.get(1, "username", "password")).thenReturn(Optional.of(trainee));
+        when(repository.get(1)).thenReturn(Optional.of(trainee));
         int actualUserId = service.get(1, "username", "password").get().getUserId();
 
         assertEquals(expectedUserId, actualUserId);
     }
 
     @Test
-    public void testGetTraineeByUsername() throws IOException, ParseException {
+    public void testGetTraineeByUsername() {
         String username = "testUser";
         String password = "testPassword";
 
         Trainee expectedTrainee = new Trainee();
 
-        when(repository.getTraineeByUsername(username, password)).thenReturn(Optional.of(expectedTrainee));
+        when(repository.getTraineeByUsername(username)).thenReturn(Optional.of(expectedTrainee));
 
         Optional<Trainee> actualTrainee = service.getTraineeByUsername(username, password);
 
@@ -90,14 +89,14 @@ public class TraineeServiceTest {
     }
 
     @Test
-    public void testDeleteTrainee() throws IOException, ParseException {
+    public void testDeleteTrainee() {
         int traineeId = 1;
         String username = "username";
         String password = "password";
 
         service.delete(traineeId, username, password);
 
-        verify(repository).delete(traineeId, username, password);
+        verify(repository).delete(traineeId);
     }
 
 //    @Test

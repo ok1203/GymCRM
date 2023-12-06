@@ -43,9 +43,9 @@ public class TrainingService {
     @Transactional
     public Training create(TrainingRequest request) {
         Training training = new Training();
-        Trainer trainer = trainerRepository.getTrainerByUsername(request.getTrainerName(), "").orElseThrow(() -> new RuntimeException("Trainer not found"));
+        Trainer trainer = trainerRepository.getTrainerByUsername(request.getTrainerName()).orElseThrow(() -> new RuntimeException("Trainer not found"));
         training.setTrainerId(trainer.getId());
-        Trainee trainee = traineeRepository.getTraineeByUsername(request.getTraineeName(), "").orElseThrow(() -> new RuntimeException("Trainee not found"));
+        Trainee trainee = traineeRepository.getTraineeByUsername(request.getTraineeName()).orElseThrow(() -> new RuntimeException("Trainee not found"));
         training.setTraineeId(trainee.getId());
         training.setDate(request.getDate());
         training.setDuration(request.getDuration());

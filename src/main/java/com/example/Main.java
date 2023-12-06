@@ -9,34 +9,38 @@ import com.example.service.TrainerService;
 import com.example.service.TrainingService;
 import com.example.service.UserService;
 import org.hibernate.SessionFactory;
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
 import java.util.Date;
 
+@SpringBootApplication
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] argv) throws IOException, ParseException {
+    public static void main(String[] argv) {
 
-        ApplicationContext applicationContext = new AnnotationConfigApplicationContext("com.example");
+        ApplicationContext applicationContext = SpringApplication.run(Main.class, argv);
+
         UserService service = applicationContext.getBean(UserService.class);
         TraineeService service1 = applicationContext.getBean(TraineeService.class);
         TrainerService service2 = applicationContext.getBean(TrainerService.class);
         TrainingService service3 = applicationContext.getBean(TrainingService.class);
 
         log.info(service.list().toString());
-        log.warn(service1.list("John.Johnson2", "11111111").toString());
-        log.error(service2.list("John.Johnson2", "11111111").toString());
+        log.info(service1.list("John.Johnson2", "11111111").toString());
+        log.info(service2.list("John.Johnson2", "11111111").toString());
 
         String username = "John.Johnson2", password = "11111111";
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses all userService methods
 
@@ -47,7 +51,7 @@ public class Main {
 //        service.delete(13);
 //        log.info(service.list().toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses save/create method of traineeService
 
@@ -56,14 +60,14 @@ public class Main {
 //        log.info(service1.create(trainee).toString());
 //        log.info(service1.list(username, password).toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses get methods of traineeService
 
 //        log.info(service1.get(12, username, password).toString());
 //        log.info(service1.getTraineeByUsername(username, password).toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         // this block uses Training related operations of traineeService
 
@@ -76,7 +80,7 @@ public class Main {
 //            password);
 //        log.info(service1.getTraineeTrainings(12, username, password).toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses delete method of traineeService
 
@@ -86,7 +90,7 @@ public class Main {
 //        log.info(service1.list(username, password).toString());
 //        log.info(service.list().toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses deleteByUsername method of traineeService
 
@@ -98,7 +102,7 @@ public class Main {
 //        log.info(service.list().toString());
 //        log.info(service1.getTraineeTrainings(12, username, password).toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses update method of traineeService
 
@@ -109,7 +113,7 @@ public class Main {
 //        log.info(service1.update(traineeToUpdate,username,password).toString());
 //        log.info(service1.get(11, username, password).get().toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses changePassword method of traineeService
 
@@ -125,7 +129,7 @@ public class Main {
 //                                getUserId()).
 //                toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses activate/deactivate method of traineeService
 
@@ -147,7 +151,7 @@ public class Main {
 //                                getUserId()).
 //                toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses save/create method of trainerService
 
@@ -156,14 +160,14 @@ public class Main {
 //        log.info(service2.create(trainer).toString());
 //        log.info(service2.list(username, password).toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses get methods of trainerService
 
 //        log.info(service2.get(2, username, password).toString());
 //        log.info(service2.getTrainerByUsername(username, password).toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         // this block uses Training related operations of trainerService
 
@@ -176,7 +180,7 @@ public class Main {
 //            password);
 //        log.info(service2.getTrainerTrainings(2, username, password).toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses delete method of trainerService
 
@@ -184,7 +188,7 @@ public class Main {
 //        service2.delete(2, username, password);
 //        log.info(service2.list(username, password).toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses update method of traineeService
 
@@ -194,7 +198,7 @@ public class Main {
 //        log.info(service2.update(trainerToUpdate,username,password).toString());
 //        log.info(service2.get(5, username, password).get().toString());
 
-        log.info(" ");
+        //log.info(" ");
 
         //this block uses changePassword method of trainerService
 

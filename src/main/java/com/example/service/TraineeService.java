@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.config.MyUniquePrometheusConfig;
 import com.example.entity.Trainer;
 import com.example.entity.User;
 import com.example.exceptions.UnupdatableException;
@@ -10,6 +11,7 @@ import com.example.rest.request.TraineeRegistrationRequest;
 import com.example.rest.request.TraineeUpdateRequest;
 import com.example.rest.request.TrainingGetRequest;
 import com.example.rest.response.TrainingResponse;
+import io.prometheus.client.Counter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,23 +29,26 @@ public class TraineeService {
     private TrainingRepository trainingRepository;
     private TrainingTypeRepository trainingTypeRepository;
     private TrainerRepository trainerRepository;
+    private Counter customCounter;
 
     @Autowired
     public TraineeService(UserRepository userRepository,
                           TraineeRepository traineeRepository,
                           TrainingRepository trainingRepository,
                           TrainingTypeRepository trainingTypeRepository,
-                          TrainerRepository trainerRepository) {
+                          TrainerRepository trainerRepository,
+                          Counter customCounter) {
         repository = traineeRepository;
         this.userRepository = userRepository;
         this.trainingRepository = trainingRepository;
         this.trainingTypeRepository = trainingTypeRepository;
         this.trainerRepository = trainerRepository;
+        this.customCounter = customCounter;
     }
 
     @Transactional(readOnly = true)
     public List<Trainee> list(String username, String password) {
-        return repository.findAll(username, password);
+        return repository.findAll();
     }
 
     @Transactional
@@ -61,7 +66,7 @@ public class TraineeService {
 
     @Transactional(readOnly = true)
     public Optional<Trainee> get(int id, String username, String password) {
-        return repository.get(id, username, password);
+        return repository.get(id);
     }
 
     @Transactional
@@ -70,8 +75,9 @@ public class TraineeService {
             trainingTypeRepository.delete(training.getTrainingTypeId());
             trainingRepository.delete(training.getId());
         }
-        int userId = repository.get(id, username, password).get().getUserId();
-        repository.delete(id, username, password);
+        int userId = repository.get(id).get().getUserId();
+        repository.delete(id);
+        customCounter.inc();
         userRepository.delete(userId);
     }
 
@@ -90,22 +96,22 @@ public class TraineeService {
 
     @Transactional(readOnly = true)
     public Optional<Trainee> getTraineeByUsername(String username, String password) {
-        return repository.getTraineeByUsername(username, password);
+        return repository.getTraineeByUsername(username);
     }
 
     @Transactional
     public void changeTraineePassword(int traineeId, String newPassword, String username, String password) {
-        userRepository.changeUserPassword(repository.get(traineeId, username, password).get().getUserId(), newPassword);
+        userRepository.changeUserPassword(repository.get(traineeId).get().getUserId(), newPassword);
     }
 
     @Transactional
     public void activateTrainee(int traineeId) {
-        userRepository.activateUser(repository.get(traineeId, "", "").get().getUserId());
+        userRepository.activateUser(repository.get(traineeId).get().getUserId());
     }
 
     @Transactional
     public void deactivateTrainee(int traineeId) {
-        userRepository.deactivateUser(repository.get(traineeId, "", "").get().getUserId());
+        userRepository.deactivateUser(repository.get(traineeId).get().getUserId());
     }
 
     @Transactional
@@ -120,13 +126,13 @@ public class TraineeService {
 
     @Transactional
     public void deleteTraineeByUsername(String username, String password) {
-        int id = repository.getTraineeByUsername(username, password).get().getId();
+        int id = repository.getTraineeByUsername(username).get().getId();
         for (Training training : repository.getTraineeTrainings(id)) {
             trainingTypeRepository.delete(training.getTrainingTypeId());
             trainingRepository.delete(training.getId());
         }
-        int userId = repository.get(id, username, password).get().getUserId();
-        repository.delete(id, username, password);
+        int userId = repository.get(id).get().getUserId();
+        repository.delete(id);
         userRepository.delete(userId);
     }
 
@@ -187,7 +193,7 @@ public class TraineeService {
         Trainee trainee = getTraineeByUsername(username, "").orElseThrow(() -> new UnupdatableException("Trainee not found"));
         List<Trainer> list = new ArrayList<>();
         for(String trainerUsername : listOfTrainersUsername) {
-            Trainer trainer = trainerRepository.getTrainerByUsername(trainerUsername,"").orElseThrow(()-> new UnupdatableException("Trainer not found"));
+            Trainer trainer = trainerRepository.getTrainerByUsername(trainerUsername).orElseThrow(()-> new UnupdatableException("Trainer not found"));
             trainer.getTrainees().add(trainee);
             list.add(trainer);
         }

@@ -43,7 +43,7 @@ public class TrainerService {
 
     @Transactional(readOnly = true)
     public List<Trainer> list(String username, String password) {
-        return repository.findAll(username, password);
+        return repository.findAll();
     }
 
     @Transactional
@@ -60,7 +60,7 @@ public class TrainerService {
 
     @Transactional(readOnly = true)
     public Optional<Trainer> get(int id, String username, String password) {
-        return repository.get(id, username, password);
+        return repository.get(id);
     }
 
     @Transactional
@@ -78,12 +78,12 @@ public class TrainerService {
 
     @Transactional(readOnly = true)
     public Optional<Trainer> getTrainerByUsername(String username, String password) {
-        return repository.getTrainerByUsername(username, password);
+        return repository.getTrainerByUsername(username);
     }
 
     @Transactional
     public void changeTrainerPassword(int trainerId, String newPassword, String username, String password) {
-        userRepository.changeUserPassword(repository.get(trainerId, username, password).get().getUserId(), newPassword);
+        userRepository.changeUserPassword(repository.get(trainerId).get().getUserId(), newPassword);
     }
 
     @Transactional
@@ -92,17 +92,17 @@ public class TrainerService {
             trainingTypeRepository.delete(training.getTrainingTypeId());
             trainingRepository.delete(training.getId());
         }
-        repository.delete(trainerId, username, password);
+        repository.delete(trainerId);
     }
 
     @Transactional
     public void activateTrainer(int trainerId) {
-        userRepository.activateUser(repository.get(trainerId, "", "").get().getUserId());
+        userRepository.activateUser(repository.get(trainerId).get().getUserId());
     }
 
     @Transactional
     public void deactivateTrainer(int trainerId) {
-        userRepository.deactivateUser(repository.get(trainerId, "", "").get().getUserId());
+        userRepository.deactivateUser(repository.get(trainerId).get().getUserId());
     }
 
     @Transactional
@@ -117,7 +117,7 @@ public class TrainerService {
 
     @Transactional(readOnly = true)
     public List<Trainer> getNotAssignedActiveTrainersForTrainee(String username) {
-        Trainee trainee = traineeRepository.getTraineeByUsername(username, "").orElseThrow(() -> new UnupdatableException("Trainer is null"));
+        Trainee trainee = traineeRepository.getTraineeByUsername(username).orElseThrow(() -> new UnupdatableException("Trainer is null"));
         List<Trainer> list = repository.getNotAssignedTrainersForTrainee(trainee)
                 .stream()
                 .filter(trainer -> trainer.getGym_user().isActive())

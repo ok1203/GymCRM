@@ -8,6 +8,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -18,66 +20,53 @@ import java.util.Optional;
 @Repository
 public class TrainerRepository {
 
-    @Autowired
-    private SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public List<Trainer> findAll(String username, String password) {
-        //authenticateTrainer(username, password);
+    public List<Trainer> findAll() {
         List<Trainer> trainers;
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
         Root<Trainer> root = criteriaQuery.from(Trainer.class);
         criteriaQuery.select(root);
 
-        trainers = session.createQuery(criteriaQuery).list();
+        trainers = entityManager.createQuery(criteriaQuery).getResultList();
 
         return trainers;
     }
 
     public Trainer create(Trainer trainer) {
-        Session session = sessionFactory.getCurrentSession();
-        session.save(trainer);
+        entityManager.persist(trainer);
         return trainer;
     }
 
-    public Optional<Trainer> get(int id, String username, String password) {
-        //authenticateTrainer(username, password);
-        Session session = sessionFactory.getCurrentSession();
-        Trainer trainer = session.get(Trainer.class, id);
+    public Optional<Trainer> get(int id) {
+        Trainer trainer = entityManager.find(Trainer.class, id);
         return Optional.ofNullable(trainer);
     }
 
     public Trainer update(Trainer trainer) {
-        //authenticateTrainer(username, password);
-        Session session = sessionFactory.getCurrentSession();
-        Trainer updatedTrainer = (Trainer) session.merge(trainer);
+        Trainer updatedTrainer = (Trainer) entityManager.merge(trainer);
         return updatedTrainer;
     }
 
-    public Optional<Trainer> getTrainerByUsername(String username, String password) {
-        //authenticateTrainer(username, password);
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+    public Optional<Trainer> getTrainerByUsername(String username) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
         Root<Trainer> root = criteriaQuery.from(Trainer.class);
         criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("gymUser").get("userName"), username));
 
-        Trainer trainer = session.createQuery(criteriaQuery).uniqueResult();
+        Trainer trainer = entityManager.createQuery(criteriaQuery).getSingleResult();
         return Optional.ofNullable(trainer);
     }
 
-    public void delete(int id, String username, String password) {
-        //authenticateTrainer(username, password);
-        Session session = sessionFactory.getCurrentSession();
-        Trainer trainer = session.get(Trainer.class, id);
-        session.delete(trainer);
+    public void delete(int id) {
+        Trainer trainer = entityManager.find(Trainer.class, id);
+        entityManager.remove(trainer);
     }
 
     public List<Trainer> getNotAssignedTrainersForTrainee(Trainee trainee) {
-        //authenticateTrainer(username, password);
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
         Root<Trainer> root = criteriaQuery.from(Trainer.class);
 
@@ -85,26 +74,23 @@ public class TrainerRepository {
                 criteriaBuilder.not(criteriaBuilder.isMember(trainee, root.get("trainees")))
         );
 
-        return session.createQuery(criteriaQuery).list();
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     public List<Training> getTrainerTrainings(int trainerId) {
-        //authenticateTrainer(username, password);
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Training> criteriaQuery = criteriaBuilder.createQuery(Training.class);
         Root<Training> trainingRoot = criteriaQuery.from(Training.class);
         Join<Training, Trainer> trainerJoin = trainingRoot.join("trainer");
 
         criteriaQuery.select(trainingRoot).where(criteriaBuilder.equal(trainerJoin.get("id"), trainerId));
 
-        List<Training> trainings = session.createQuery(criteriaQuery).list();
+        List<Training> trainings = entityManager.createQuery(criteriaQuery).getResultList();
         return trainings;
     }
 
     public void authenticateTrainer(String username, String password) {
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Trainer> criteriaQuery = criteriaBuilder.createQuery(Trainer.class);
         Root<Trainer> root = criteriaQuery.from(Trainer.class);
         criteriaQuery.select(root).where(
@@ -112,7 +98,7 @@ public class TrainerRepository {
                 criteriaBuilder.equal(root.get("gymUser").get("password"), password)
         );
 
-        List<Trainer> trainers = session.createQuery(criteriaQuery).getResultList();
+        List<Trainer> trainers = entityManager.createQuery(criteriaQuery).getResultList();
 
         if (trainers.isEmpty()) { // Authentication succeeds if the query returns any results.
             throw new SecurityException("Authentication failed for user: " + username);

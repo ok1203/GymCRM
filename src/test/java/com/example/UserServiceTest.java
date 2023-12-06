@@ -3,7 +3,6 @@ package com.example;
 import com.example.entity.User;
 import com.example.repo.UserRepository;
 import com.example.service.UserService;
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,7 +29,7 @@ public class UserServiceTest {
     private UserService service;
 
     @Test
-    public void testGetId() throws IOException, ParseException {
+    public void testGetId() {
         int expectedInt = 1;
         List<User> userList = new ArrayList<>();
         userList.add(user);
@@ -42,7 +41,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testGetFirstName() throws IOException, ParseException {
+    public void testGetFirstName() {
         String expectedStr = "John";
         List <User> userList = new ArrayList<>();
         userList.add(user);
@@ -54,7 +53,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testGetLastName() throws IOException, ParseException {
+    public void testGetLastName() {
         String expectedStr = "Johnson";
         List <User> userList = new ArrayList<>();
         userList.add(user);
@@ -66,7 +65,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testGetUsername() throws IOException, ParseException {
+    public void testGetUsername() {
         String expectedStr = "john.johnson";
         List <User> userList = new ArrayList<>();
         userList.add(user);
@@ -78,7 +77,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testGetPassword() throws IOException, ParseException {
+    public void testGetPassword() {
         String expectedStr = "password";
         List <User> userList = new ArrayList<>();
         userList.add(user);
@@ -90,7 +89,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testIsIsActive() throws IOException, ParseException {
+    public void testIsIsActive() {
         Boolean expectedBool = true;
         List <User> userList = new ArrayList<>();
         userList.add(user);

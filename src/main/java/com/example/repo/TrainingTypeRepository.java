@@ -6,6 +6,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -15,53 +17,47 @@ import java.util.Optional;
 @Repository
 public class TrainingTypeRepository {
 
-    @Autowired
-    private SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public List<TrainingType> findAll() {
         List<TrainingType> trainingTypes;
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<TrainingType> criteriaQuery = criteriaBuilder.createQuery(TrainingType.class);
         Root<TrainingType> root = criteriaQuery.from(TrainingType.class);
         criteriaQuery.select(root);
 
-        trainingTypes = session.createQuery(criteriaQuery).list();
+        trainingTypes = entityManager.createQuery(criteriaQuery).getResultList();
         return trainingTypes;
     }
 
     public Optional<TrainingType> get(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        TrainingType trainingType = session.get(TrainingType.class, id);
+        TrainingType trainingType = entityManager.find(TrainingType.class, id);
         return Optional.ofNullable(trainingType);
     }
 
     public Optional<TrainingType> getByName(String name) {
-        Session session = sessionFactory.getCurrentSession();
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<TrainingType> criteriaQuery = criteriaBuilder.createQuery(TrainingType.class);
         Root<TrainingType> root = criteriaQuery.from(TrainingType.class);
         criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("typeName"), name));
-        TrainingType trainingType = session.createQuery(criteriaQuery).uniqueResult();
+        TrainingType trainingType = entityManager.createQuery(criteriaQuery).getSingleResult();
         return Optional.ofNullable(trainingType);
     }
 
     public TrainingType create(TrainingType trainingType) {
-        Session session = sessionFactory.getCurrentSession();
-        session.save(trainingType);
+        entityManager.persist(trainingType);
         return trainingType;
     }
 
     public void update(TrainingType trainingType) {
-        Session session = sessionFactory.getCurrentSession();
-        session.update(trainingType);
+        entityManager.merge(trainingType);
     }
 
     public void delete(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        TrainingType trainingType = session.get(TrainingType.class, id);
+        TrainingType trainingType = entityManager.find(TrainingType.class, id);
         if (trainingType != null) {
-            session.delete(trainingType);
+            entityManager.remove(trainingType);
         }
     }
 }
