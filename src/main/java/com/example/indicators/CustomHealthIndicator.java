@@ -1,10 +1,12 @@
-package com.example;
+package com.example.indicators;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+
+import java.io.File;
 
 @Component
 public class CustomHealthIndicator implements HealthIndicator {
@@ -35,4 +37,5 @@ public class CustomHealthIndicator implements HealthIndicator {
             return false;
         }
     }
+
 }
