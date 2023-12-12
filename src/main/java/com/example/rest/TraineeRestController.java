@@ -12,20 +12,17 @@ import com.example.rest.response.TrainingResponse;
 import com.example.service.TraineeService;
 import com.example.service.TrainerService;
 import com.example.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.*;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/trainee")
-@Api(value = "Trainee API", description = "Operations related to Trainee")
 public class TraineeRestController {
 
     @Autowired
@@ -38,33 +35,30 @@ public class TraineeRestController {
     private UserService userService;
 
     //1. Trainee Registration (POST method)
-    @ApiOperation(value = "Trainee Registration", response = Map.class)
     @PostMapping("/registration")
     public ResponseEntity<Map<String, String>> traineeRegistration(@Valid @RequestBody TraineeRegistrationRequest request) {
         Trainee trainee = traineeService.create(request);
 
         Map<String, String> response = new HashMap<>();
         response.put("Username", userService.get(trainee.getUserId()).get().getUserName());
-        response.put("Password", userService.get(trainee.getUserId()).get().getPassword());
+        response.put("Password", traineeService.getTemporaryPassword(trainee.getUserId()));
 
         return ResponseEntity.ok(response);
     }
 
     // 5. Get Trainee Profile (GET method)
-    @ApiOperation(value = "Get Trainee Profile", response = TraineeProfileResponse.class)
     @GetMapping("/profile")
     public ResponseEntity<TraineeProfileResponse> getTraineeProfile(
-            @ApiParam(value = "Username", required = true) @RequestParam String username) {
+            @RequestParam String username) {
         Trainee trainee = traineeService.getTraineeByUsername(username, "").get();
         TraineeProfileResponse response = new TraineeProfileResponse(trainee);
         return ResponseEntity.ok(response);
     }
 
     // 6. Update Trainee Profile (PUT method)
-    @ApiOperation(value = "Update Trainee Profile", response = TraineeProfileResponse.class)
     @PutMapping("/profile")
     public ResponseEntity<TraineeProfileResponse> updateTraineeProfile(
-            @ApiParam(value = "Username", required = true) @RequestParam String username,
+            @RequestParam String username,
             @Valid @RequestBody TraineeUpdateRequest request) {
         Trainee updatedTrainee = traineeService.update(request);
         TraineeProfileResponse response = new TraineeProfileResponse(updatedTrainee);
@@ -72,10 +66,9 @@ public class TraineeRestController {
     }
 
     // 7. Delete Trainee Profile (DELETE method)
-    @ApiOperation(value = "Delete Trainee Profile")
     @DeleteMapping("/profile")
     public ResponseEntity<String> deleteTraineeProfile(
-            @ApiParam(value = "Username", required = true) @RequestParam String username) {
+            @RequestParam String username) {
         int id = traineeService.getTraineeByUsername(username, "").get().getId();
         traineeService.delete(id, username, "");
 
@@ -83,10 +76,9 @@ public class TraineeRestController {
     }
 
     // 10. Get not assigned on trainee active trainers. (GET method)
-    @ApiOperation(value = "Get not assigned on trainee active trainers", response = TrainerProfileResponse.class, responseContainer = "List")
     @GetMapping("/not-assigned-trainers")
     public ResponseEntity<List<TrainerProfileResponse>> getNotAssignedActiveTrainersForTrainee(
-            @ApiParam(value = "Username", required = true) @RequestParam String username) {
+            @RequestParam String username) {
         List<Trainer> listOfTrainers = trainerService.getNotAssignedActiveTrainersForTrainee(username);
         List<TrainerProfileResponse> responseList = new ArrayList<>();
         for (Trainer trainer : listOfTrainers) {
@@ -97,10 +89,9 @@ public class TraineeRestController {
     }
 
     // 11. Update Trainee's Trainer List (PUT method)
-    @ApiOperation(value = "Update Trainee's Trainer List", response = TrainerProfileResponse.class, responseContainer = "List")
     @PutMapping("/update-trainers")
     public ResponseEntity<List<TrainerProfileResponse>> updateTrainers(
-            @ApiParam(value = "Username", required = true) @RequestParam String username,
+            @RequestParam String username,
             @Valid @RequestBody List<String> listOfTrainersUsername) {
         List<Trainer> listOfTrainers = traineeService.updateTrainers(username, listOfTrainersUsername);
         List<TrainerProfileResponse> responseList = new ArrayList<>();
@@ -112,19 +103,17 @@ public class TraineeRestController {
     }
 
     //12. Get Trainee Trainings List (GET method)
-    @ApiOperation(value = "Get Trainee Trainings List", response = TrainingResponse.class, responseContainer = "List")
     @GetMapping("/trainings")
     public ResponseEntity<List<TrainingResponse>> getTraineeTrainings(
-            @ApiParam(value = "Training Get Request", required = true) @Valid @RequestBody TrainingGetRequest request) {
+            @Valid @RequestBody TrainingGetRequest request) {
         return ResponseEntity.ok(traineeService.getTraineeTrainings(request));
     }
 
     //15. Activate/De-Activate Trainee (PATCH method)
-    @ApiOperation(value = "Activate/De-Activate Trainee")
     @PatchMapping("/change-status")
     private ResponseEntity<String> changeStatus(
-            @ApiParam(value = "Username", required = true) @RequestParam String username,
-            @ApiParam(value = "Status", required = true) @RequestParam Boolean status) {
+            @RequestParam String username,
+            @RequestParam Boolean status) {
         traineeService.changeStatus(username, status);
         return ResponseEntity.ok("Status changed successfully");
     }

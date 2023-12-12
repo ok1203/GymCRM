@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +25,11 @@ public class TrainerService {
     private TrainingRepository trainingRepository;
     private TrainingTypeRepository trainingTypeRepository;
     private TraineeRepository traineeRepository;
+    private final Map<Integer, String> temporaryPasswords = new HashMap<>();
+
+    public String getTemporaryPassword(Integer userId) {
+        return temporaryPasswords.get(userId); // Retrieve the temporary password by user ID
+    }
 
     @Autowired
     public TrainerService(TrainerRepository trainerRepository,
@@ -49,7 +52,9 @@ public class TrainerService {
     @Transactional
     public Trainer create(TrainerRegistrationRequest request) {
         User user = new User(request.getFirstName(), request.getLastName(), true);
+        String rawPassword = user.getPassword();
         userRepository.create(user);
+        temporaryPasswords.put(user.getId(), rawPassword);
 
         Trainer trainer = new Trainer();
         trainer.setSpecializationId(request.getSpecializationId());

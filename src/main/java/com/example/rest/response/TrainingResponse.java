@@ -2,7 +2,7 @@ package com.example.rest.response;
 
 import com.example.entity.Training;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 
 public class TrainingResponse {

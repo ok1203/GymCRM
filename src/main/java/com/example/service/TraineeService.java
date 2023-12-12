@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.config.MyUniquePrometheusConfig;
+import com.example.Main;
 import com.example.entity.Trainer;
 import com.example.entity.User;
 import com.example.exceptions.UnupdatableException;
@@ -12,24 +12,29 @@ import com.example.rest.request.TraineeUpdateRequest;
 import com.example.rest.request.TrainingGetRequest;
 import com.example.rest.response.TrainingResponse;
 import io.prometheus.client.Counter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class TraineeService {
 
-    private TraineeRepository repository;
-    private UserRepository userRepository;
-    private TrainingRepository trainingRepository;
-    private TrainingTypeRepository trainingTypeRepository;
-    private TrainerRepository trainerRepository;
-    private Counter customCounter;
+    private final TraineeRepository repository;
+    private final UserRepository userRepository;
+    private final TrainingRepository trainingRepository;
+    private final TrainingTypeRepository trainingTypeRepository;
+    private final TrainerRepository trainerRepository;
+    private final Counter customCounter;
+    private final Map<Integer, String> temporaryPasswords = new HashMap<>();
+
+    public String getTemporaryPassword(Integer userId) {
+        return temporaryPasswords.get(userId); // Retrieve the temporary password by user ID
+    }
 
     @Autowired
     public TraineeService(UserRepository userRepository,
@@ -54,7 +59,9 @@ public class TraineeService {
     @Transactional
     public Trainee create(TraineeRegistrationRequest request) {
         User user = new User(request.getFirstName(), request.getLastName(), true); // Assuming isActive is set to true
+        String rawPassword = user.getPassword();
         userRepository.create(user);
+        temporaryPasswords.put(user.getId(), rawPassword);
 
         Trainee trainee = new Trainee();
         trainee.setDateOfBirth(request.getDateOfBirth());

@@ -1,8 +1,8 @@
 package com.example.entity;
 
+import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 
-import javax.persistence.*;
 import java.util.Date;
 
 @Entity

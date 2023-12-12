@@ -2,7 +2,7 @@ package com.example.entity;
 
 import org.springframework.lang.NonNull;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "training_type")

@@ -1,6 +1,7 @@
 package com.example.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class Trainee {
     @Column(name = "user_id")
     private int userId;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User gymUser;
 
