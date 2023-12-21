@@ -33,13 +33,12 @@ public class User {
     @Column(name = "is_active")
     private boolean isActive;
 
-
     //TODO rethink about connection
-//    @OneToOne(mappedBy = "gymUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private Trainee trainee;
-//
-//    @OneToOne(mappedBy = "gymUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    private Trainer trainer;
+    @OneToOne(mappedBy = "gymUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Trainee trainee;
+
+    @OneToOne(mappedBy = "gymUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Trainer trainer;
 
     public User(String firstName, String lastName, boolean isActive) {
         this.firstName = firstName;

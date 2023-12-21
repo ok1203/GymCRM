@@ -39,11 +39,13 @@ public class SecurityConfiguration {
                 .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
-                                "/api/trainee/registration",
-                                "/api/trainer/registration",
-                                "/api/login",
-                                "/blocked",
-                                "/swagger-ui/index.html")
+                                "/api/trainee/registration"
+                                , "/api/trainer/registration"
+                                , "/api/login"
+                                , "/blocked"
+                                , "/swagger-ui/index.html"
+                                //, "/api/user-details/*"
+                        )
                         .permitAll()
                         .anyRequest()
                         .authenticated()

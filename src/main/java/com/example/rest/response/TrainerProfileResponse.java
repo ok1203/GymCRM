@@ -24,9 +24,12 @@ public class TrainerProfileResponse {
     }
 
     public TrainerProfileResponse(Trainer trainer) {
+        this.username = trainer.getGym_user().getUserName();
         this.firstName = trainer.getGym_user().getFirstName();
         this.lastName = trainer.getGym_user().getLastName();
+        this.specializationId = trainer.getSpecializationId();
         this.isActive = trainer.getGym_user().isActive();
+        this.trainees = trainer.getTrainees();
     }
 
     // Getters and setters

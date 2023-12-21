@@ -1,5 +1,8 @@
 spring:
   main:
     allow-circular-references: true
+    allow-bean-definition-overriding: true
   config:
     active: "local"
+  application:
+    name: main-app-client

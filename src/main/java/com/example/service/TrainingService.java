@@ -8,13 +8,21 @@ import com.example.repo.TraineeRepository;
 import com.example.repo.TrainerRepository;
 import com.example.repo.TrainingRepository;
 import com.example.repo.TrainingTypeRepository;
+import com.example.rest.request.ActionType;
 import com.example.rest.request.TrainingRequest;
+import com.example.rest.request.TrainingSecondaryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Service
 public class TrainingService {
@@ -23,6 +31,10 @@ public class TrainingService {
     private TrainerRepository trainerRepository;
     private TraineeRepository traineeRepository;
     private TrainingTypeRepository trainingTypeRepository;
+    private String workloadUrl = "http://desktop-h8sautm:9090" + "/trainer/workload";
+
+    @LoadBalanced
+    RestClient restClient = RestClient.create();
 
     @Autowired
     public TrainingService(TrainingRepository trainingRepository,
@@ -56,6 +68,17 @@ public class TrainingService {
             trainingTypeRepository.create(trainingType);
         }
         training.setTrainingTypeId(trainingTypeRepository.getByName(request.getTrainingName()).get().getId());
+
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        String jwt = requestAttributes.getRequest().getHeader("Authorization");
+        TrainingSecondaryRequest secondaryRequest = createSecondaryRequest(request, ActionType.ADD);
+        restClient.post()
+                .uri(workloadUrl)
+                .header("Authorization", jwt)
+                .contentType(APPLICATION_JSON)
+                .body(secondaryRequest)
+                .retrieve();
+
         return repository.create(training);
     }
 
@@ -66,6 +89,36 @@ public class TrainingService {
 
     @Transactional
     public void delete(int id) {
+        TrainingSecondaryRequest secondaryRequest = new TrainingSecondaryRequest();
+        Training training = repository.get(id).orElseThrow();
+        secondaryRequest.setTrainerUsername(training.getTrainer().getGym_user().getUserName());
+        secondaryRequest.setTrainingDate(training.getDate());
+        secondaryRequest.setTrainingDuration(training.getDuration());
+        secondaryRequest.setActionType(ActionType.DELETE);
+
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        String jwt = requestAttributes.getRequest().getHeader("Authorization");
+
+        restClient.post()
+                .uri(workloadUrl)
+                .header("Authorization", jwt)
+                .contentType(APPLICATION_JSON)
+                .body(secondaryRequest)
+                .retrieve();
         repository.delete(id);
+    }
+
+    private TrainingSecondaryRequest createSecondaryRequest(TrainingRequest request, ActionType actionType) {
+        // Create a TrainingSecondaryRequest object from the TrainingRequest object
+        TrainingSecondaryRequest secondaryRequest = new TrainingSecondaryRequest();
+        secondaryRequest.setTrainerUsername(request.getTrainerName());
+        Trainer trainer = trainerRepository.getTrainerByUsername(request.getTrainerName()).orElseThrow();
+        secondaryRequest.setTrainerFirstname(trainer.getGym_user().getFirstName());
+        secondaryRequest.setTrainerLastname(trainer.getGym_user().getLastName());
+        secondaryRequest.setActive(trainer.getGym_user().isActive());
+        secondaryRequest.setTrainingDate(request.getDate());
+        secondaryRequest.setTrainingDuration(request.getDuration());
+        secondaryRequest.setActionType(actionType);
+        return secondaryRequest;
     }
 }
