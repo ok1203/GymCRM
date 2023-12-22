@@ -33,7 +33,7 @@ public class TraineeServiceTest {
         trainee.setId(expectedId);
 
         when(repository.get(expectedId)).thenReturn(Optional.of(trainee));
-        int actualId = service.get(expectedId, "username", "password").get().getId();
+        int actualId = service.get(expectedId).get().getId();
 
         assertEquals(expectedId, actualId);
     }
@@ -45,7 +45,7 @@ public class TraineeServiceTest {
         trainee.setDateOfBirth(expectedDate);
 
         when(repository.get(1)).thenReturn(Optional.of(trainee));
-        Date actualDate = service.get(1, "username", "password").get().getDateOfBirth();
+        Date actualDate = service.get(1).get().getDateOfBirth();
 
         assertEquals(expectedDate, actualDate);
     }
@@ -57,7 +57,7 @@ public class TraineeServiceTest {
         trainee.setAddress(expectedAddr);
 
         when(repository.get(1)).thenReturn(Optional.of(trainee));
-        String actualAddr = service.get(1, "username", "password").get().getAddress();
+        String actualAddr = service.get(1).get().getAddress();
 
         assertEquals(expectedAddr, actualAddr);
     }
@@ -69,7 +69,7 @@ public class TraineeServiceTest {
         trainee.setUserId(expectedUserId);
 
         when(repository.get(1)).thenReturn(Optional.of(trainee));
-        int actualUserId = service.get(1, "username", "password").get().getUserId();
+        int actualUserId = service.get(1).get().getUserId();
 
         assertEquals(expectedUserId, actualUserId);
     }
@@ -83,7 +83,7 @@ public class TraineeServiceTest {
 
         when(repository.getTraineeByUsername(username)).thenReturn(Optional.of(expectedTrainee));
 
-        Optional<Trainee> actualTrainee = service.getTraineeByUsername(username, password);
+        Optional<Trainee> actualTrainee = service.getTraineeByUsername(username);
 
         assertEquals(expectedTrainee, actualTrainee.orElse(null));
     }
@@ -94,7 +94,7 @@ public class TraineeServiceTest {
         String username = "username";
         String password = "password";
 
-        service.delete(traineeId, username, password);
+        service.delete(traineeId);
 
         verify(repository).delete(traineeId);
     }

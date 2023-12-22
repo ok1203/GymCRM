@@ -1,11 +1,8 @@
 package com.example.service;
 
 import com.example.Main;
-import com.example.entity.Trainer;
-import com.example.entity.User;
+import com.example.entity.*;
 import com.example.exceptions.UnupdatableException;
-import com.example.entity.Trainee;
-import com.example.entity.Training;
 import com.example.repo.*;
 import com.example.rest.request.TraineeRegistrationRequest;
 import com.example.rest.request.TraineeUpdateRequest;
@@ -72,12 +69,12 @@ public class TraineeService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Trainee> get(int id, String username, String password) {
+    public Optional<Trainee> get(int id) {
         return repository.get(id);
     }
 
     @Transactional
-    public void delete(int id, String username, String password) {
+    public void delete(int id) {
         for (Training training : repository.getTraineeTrainings(id)) {
             trainingTypeRepository.delete(training.getTrainingTypeId());
             trainingRepository.delete(training.getId());
@@ -90,7 +87,7 @@ public class TraineeService {
 
     @Transactional
     public Trainee update(TraineeUpdateRequest request) throws UnupdatableException {
-        Trainee trainee = getTraineeByUsername(request.getUsername(), "").orElseThrow(() -> new UnupdatableException("Trainee is null"));
+        Trainee trainee = getTraineeByUsername(request.getUsername()).orElseThrow(() -> new UnupdatableException("Trainee is null"));
 
         trainee.setAddress(request.getAddress());
         User user = trainee.getGym_user();
@@ -102,12 +99,12 @@ public class TraineeService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Trainee> getTraineeByUsername(String username, String password) {
+    public Optional<Trainee> getTraineeByUsername(String username) {
         return repository.getTraineeByUsername(username);
     }
 
     @Transactional
-    public void changeTraineePassword(int traineeId, String newPassword, String username, String password) {
+    public void changeTraineePassword(int traineeId, String newPassword) {
         userRepository.changeUserPassword(repository.get(traineeId).get().getUserId(), newPassword);
     }
 
@@ -123,7 +120,7 @@ public class TraineeService {
 
     @Transactional
     public void changeStatus(String username, Boolean status) {
-        Trainee trainee = getTraineeByUsername(username, "").orElseThrow(() -> new RuntimeException("Trainee not found"));
+        Trainee trainee = getTraineeByUsername(username).orElseThrow(() -> new RuntimeException("Trainee not found"));
         if (status) {
             activateTrainee(trainee.getId());
         } else {
@@ -144,40 +141,17 @@ public class TraineeService {
     }
 
     @Transactional
-    public void addTrainingToTrainee(Trainee trainee, Training training, String username, String password) {
+    public void addTrainingToTrainee(Trainee trainee, Training training) {
         training.setTraineeId(trainee.getId());
         trainingRepository.create(training);
     }
 
     @Transactional(readOnly = true)
     public List<TrainingResponse> getTraineeTrainings(TrainingGetRequest request) {
-        Trainee trainee = getTraineeByUsername(request.getUsername(), "").orElseThrow(()-> new RuntimeException("Trainee not found"));
-        List<Training> list = repository.getTraineeTrainings(trainee.getId());
-
-        if (request.getFromDate() != null)
-            list = list
-                    .stream()
-                    .filter(training -> training.getDate().after(request.getFromDate()))
-                    .collect(Collectors.toList());
-        if (request.getToDate() != null)
-            list = list
-                    .stream()
-                    .filter(training -> training.getDate().before(request.getToDate()))
-                    .collect(Collectors.toList());
-        if (request.getTrainerName() != null)
-            list = list
-                    .stream()
-                    .filter(training -> training.getTrainer().getGym_user().getUserName().equals(request.getTrainerName()))
-                    .collect(Collectors.toList());
-        if (request.getTrainingType() != null)
-            list = list
-                    .stream()
-                    .filter(training -> trainingTypeRepository.get(
-                            training.getTrainingTypeId())
-                            .orElseThrow(()-> new RuntimeException("Training type not found"))
-                            .getTypeName()
-                            .equals(request.getTrainingType()))
-                    .collect(Collectors.toList());
+        Trainee trainee = getTraineeByUsername(request.getUsername()).orElseThrow(()-> new RuntimeException("Trainee not found"));
+        Integer typeId = (request.getTrainingType() == null) ? 0 : trainingTypeRepository.getByName(request.getTrainingType()).orElseThrow().getId();
+        Integer trainerId = (request.getTrainerName() == null) ? 0 : trainerRepository.getTrainerByUsername(request.getTrainerName()).orElseThrow().getId();
+        List<Training> list = repository.getTraineeTrainings(trainee.getId(), request.getFromDate(), request.getToDate(), trainerId, typeId);
 
         List<TrainingResponse> responseList = new ArrayList<>();
         for (Training training: list) {
@@ -197,7 +171,7 @@ public class TraineeService {
 
     @Transactional
     public List<Trainer> updateTrainers(String username, List<String> listOfTrainersUsername) {
-        Trainee trainee = getTraineeByUsername(username, "").orElseThrow(() -> new UnupdatableException("Trainee not found"));
+        Trainee trainee = getTraineeByUsername(username).orElseThrow(() -> new UnupdatableException("Trainee not found"));
         List<Trainer> list = new ArrayList<>();
         for(String trainerUsername : listOfTrainersUsername) {
             Trainer trainer = trainerRepository.getTrainerByUsername(trainerUsername).orElseThrow(()-> new UnupdatableException("Trainer not found"));

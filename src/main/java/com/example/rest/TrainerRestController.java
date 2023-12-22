@@ -19,7 +19,6 @@ import java.util.Map;
 
 @org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/trainer")
-//@Api(value = "Trainer API", description = "Operations related to Trainer")
 public class TrainerRestController {
 
     @Autowired
@@ -29,7 +28,6 @@ public class TrainerRestController {
     private UserService userService;
 
     //2. Trainer Registration (POST method)
-    //@ApiOperation(value = "Trainer Registration", response = Map.class)
     @PostMapping("/registration")
     public ResponseEntity<Map<String, String>> trainerRegistration(@Valid @RequestBody TrainerRegistrationRequest request) {
         Trainer trainer = trainerService.create(request);
@@ -42,20 +40,17 @@ public class TrainerRestController {
     }
 
     // 8. Get Trainer Profile (GET method)
-    //@ApiOperation(value = "Get Trainer Profile", response = TrainerProfileResponse.class)
     @GetMapping("/profile")
     public ResponseEntity<TrainerProfileResponse> getTrainerProfile(
             @RequestParam String username) {
-        Trainer trainer = trainerService.getTrainerByUsername(username, "").get();
+        Trainer trainer = trainerService.getTrainerByUsername(username).get();
         TrainerProfileResponse response = new TrainerProfileResponse(trainer);
         return ResponseEntity.ok(response);
     }
 
     // 9. Update Trainer Profile (PUT method)
-    //@ApiOperation(value = "Update Trainer Profile", response = TrainerProfileResponse.class)
     @PutMapping("/profile")
     public ResponseEntity<TrainerProfileResponse> updateTrainerProfile(
-            @RequestParam String username,
             @Valid @RequestBody TrainerUpdateRequest request) {
         Trainer updatedTrainer = trainerService.update(request);
         TrainerProfileResponse response = new TrainerProfileResponse(updatedTrainer);
@@ -63,7 +58,6 @@ public class TrainerRestController {
     }
 
     //13. Get Trainer Trainings List (GET method)
-    //@ApiOperation(value = "Get Trainer Trainings List", response = TrainingResponse.class, responseContainer = "List")
     @GetMapping("/trainings")
     public ResponseEntity<List<TrainingResponse>> getTrainerTrainings(
             @Valid @RequestBody TrainingGetRequest request) {
@@ -71,12 +65,11 @@ public class TrainerRestController {
     }
 
     //16. Activate/De-Activate Trainer (PATCH method)
-    //@ApiOperation(value = "Activate/De-Activate Trainer")
     @PatchMapping("/change-status")
-    private ResponseEntity<String> changeStatus(
+    private ResponseEntity<Void> changeStatus(
             @RequestParam String username,
             @RequestParam Boolean status) {
         trainerService.changeStatus(username, status);
-        return ResponseEntity.ok("Status changed successfully");
+        return ResponseEntity.ok().build();
     }
 }

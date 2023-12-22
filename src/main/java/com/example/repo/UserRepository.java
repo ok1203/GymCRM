@@ -70,7 +70,8 @@ public class UserRepository {
     public void changeUserPassword(int id, String newPassword) {
         User user = entityManager.find(User.class, id);
         if (user != null) {
-            user.setPassword(newPassword);
+            String encodedPassword = passwordEncoder.encode(newPassword);
+            user.setPassword(encodedPassword);
             entityManager.merge(user);
         } else {
             throw new RuntimeException("User not found with ID: " + id);

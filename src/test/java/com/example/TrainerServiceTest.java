@@ -71,7 +71,7 @@ public class TrainerServiceTest {
 
         when(repository.getTrainerByUsername(username)).thenReturn(Optional.of(expectedTrainer));
 
-        Optional<Trainer> actualTrainee = service.getTrainerByUsername(username, password);
+        Optional<Trainer> actualTrainee = service.getTrainerByUsername(username);
 
         assertEquals(expectedTrainer, actualTrainee.orElse(null));
     }

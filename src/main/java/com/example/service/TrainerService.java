@@ -70,7 +70,7 @@ public class TrainerService {
 
     @Transactional
     public Trainer update(TrainerUpdateRequest request) throws UnupdatableException {
-        Trainer trainer = getTrainerByUsername(request.getUsername(), "").orElseThrow(() -> new UnupdatableException("Trainer is null"));
+        Trainer trainer = getTrainerByUsername(request.getUsername()).orElseThrow(() -> new UnupdatableException("Trainer is null"));
 
         trainer.setSpecializationId(request.getSpecializationId());
         User user = trainer.getGym_user();
@@ -82,12 +82,12 @@ public class TrainerService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Trainer> getTrainerByUsername(String username, String password) {
+    public Optional<Trainer> getTrainerByUsername(String username) {
         return repository.getTrainerByUsername(username);
     }
 
     @Transactional
-    public void changeTrainerPassword(int trainerId, String newPassword, String username, String password) {
+    public void changeTrainerPassword(int trainerId, String newPassword) {
         userRepository.changeUserPassword(repository.get(trainerId).get().getUserId(), newPassword);
     }
 
@@ -112,7 +112,7 @@ public class TrainerService {
 
     @Transactional
     public void changeStatus(String username, Boolean status) {
-        Trainer trainer = getTrainerByUsername(username, "").orElseThrow(() -> new RuntimeException("Trainer not found"));
+        Trainer trainer = getTrainerByUsername(username).orElseThrow(() -> new RuntimeException("Trainer not found"));
         if (status) {
             activateTrainer(trainer.getId());
         } else {
@@ -138,24 +138,26 @@ public class TrainerService {
 
     @Transactional(readOnly = true)
     public List<TrainingResponse> getTrainerTrainings(TrainingGetRequest request) {
-        Trainer trainer = getTrainerByUsername(request.getUsername(), "").orElseThrow(()-> new RuntimeException("Trainer not found"));
-        List<Training> list = repository.getTrainerTrainings(trainer.getId());
-
-        if (request.getFromDate() != null)
-            list = list
-                    .stream()
-                    .filter(training -> training.getDate().after(request.getFromDate()))
-                    .collect(Collectors.toList());
-        if (request.getToDate() != null)
-            list = list
-                    .stream()
-                    .filter(training -> training.getDate().before(request.getToDate()))
-                    .collect(Collectors.toList());
-        if (request.getTraineeName() != null)
-            list = list
-                    .stream()
-                    .filter(training -> training.getTrainee().getGym_user().getUserName().equals(request.getTraineeName()))
-                    .collect(Collectors.toList());
+        Trainer trainer = getTrainerByUsername(request.getUsername()).orElseThrow(()-> new RuntimeException("Trainer not found"));
+        Integer traineeId = (request.getTraineeName() == null) ? 0 : traineeRepository.getTraineeByUsername(request.getTraineeName()).orElseThrow().getId();
+        List<Training> list = repository.getTrainerTrainings(trainer.getId(), request.getFromDate(), request.getToDate(), traineeId);
+//        List<Training> list = repository.getTrainerTrainings(trainer.getId());
+//
+//        if (request.getFromDate() != null)
+//            list = list
+//                    .stream()
+//                    .filter(training -> training.getDate().after(request.getFromDate()))
+//                    .collect(Collectors.toList());
+//        if (request.getToDate() != null)
+//            list = list
+//                    .stream()
+//                    .filter(training -> training.getDate().before(request.getToDate()))
+//                    .collect(Collectors.toList());
+//        if (request.getTraineeName() != null)
+//            list = list
+//                    .stream()
+//                    .filter(training -> training.getTrainee().getGym_user().getUserName().equals(request.getTraineeName()))
+//                    .collect(Collectors.toList());
 
         List<TrainingResponse> responseList = new ArrayList<>();
         for (Training training: list) {

@@ -29,6 +29,16 @@ public class UserService {
         return repository.create(user);
     }
 
+    @Transactional
+    public void changeUserPassword(int id, String newPassword) {
+        repository.changeUserPassword(id, newPassword);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<User> getByUsername(String username) {
+        return repository.findByUserName(username);
+    }
+
     @Transactional(readOnly = true)
     public Optional<User> get(int id) {
         return repository.get(id);

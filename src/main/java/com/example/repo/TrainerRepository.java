@@ -3,17 +3,14 @@ package com.example.repo;
 import com.example.entity.Trainee;
 import com.example.entity.Trainer;
 import com.example.entity.Training;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.criteria.*;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Root;
+
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,6 +81,33 @@ public class TrainerRepository {
         Join<Training, Trainer> trainerJoin = trainingRoot.join("trainer");
 
         criteriaQuery.select(trainingRoot).where(criteriaBuilder.equal(trainerJoin.get("id"), trainerId));
+
+        List<Training> trainings = entityManager.createQuery(criteriaQuery).getResultList();
+        return trainings;
+    }
+
+    public List<Training> getTrainerTrainings(int trainerId, Date fromDate, Date toDate, int traineeId) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Training> criteriaQuery = criteriaBuilder.createQuery(Training.class);
+        Root<Training> trainingRoot = criteriaQuery.from(Training.class);
+        Join<Training, Trainer> trainerJoin = trainingRoot.join("trainer");
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(criteriaBuilder.equal(trainerJoin.get("id"), trainerId));
+
+        if (fromDate != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(trainingRoot.get("date"), fromDate));
+        }
+
+        if (toDate != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(trainingRoot.get("date"), toDate));
+        }
+
+        if (traineeId > 0) {
+            predicates.add(criteriaBuilder.equal(trainingRoot.get("traineeId"), traineeId));
+        }
+
+        criteriaQuery.select(trainingRoot).where(predicates.toArray(new Predicate[0]));
 
         List<Training> trainings = entityManager.createQuery(criteriaQuery).getResultList();
         return trainings;

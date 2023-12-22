@@ -36,7 +36,8 @@ public class TraineeRestController {
 
     //1. Trainee Registration (POST method)
     @PostMapping("/registration")
-    public ResponseEntity<Map<String, String>> traineeRegistration(@Valid @RequestBody TraineeRegistrationRequest request) {
+    public ResponseEntity<Map<String, String>> traineeRegistration(
+            @Valid @RequestBody TraineeRegistrationRequest request) {
         Trainee trainee = traineeService.create(request);
 
         Map<String, String> response = new HashMap<>();
@@ -50,7 +51,7 @@ public class TraineeRestController {
     @GetMapping("/profile")
     public ResponseEntity<TraineeProfileResponse> getTraineeProfile(
             @RequestParam String username) {
-        Trainee trainee = traineeService.getTraineeByUsername(username, "").get();
+        Trainee trainee = traineeService.getTraineeByUsername(username).get();
         TraineeProfileResponse response = new TraineeProfileResponse(trainee);
         return ResponseEntity.ok(response);
     }
@@ -58,7 +59,6 @@ public class TraineeRestController {
     // 6. Update Trainee Profile (PUT method)
     @PutMapping("/profile")
     public ResponseEntity<TraineeProfileResponse> updateTraineeProfile(
-            @RequestParam String username,
             @Valid @RequestBody TraineeUpdateRequest request) {
         Trainee updatedTrainee = traineeService.update(request);
         TraineeProfileResponse response = new TraineeProfileResponse(updatedTrainee);
@@ -67,12 +67,12 @@ public class TraineeRestController {
 
     // 7. Delete Trainee Profile (DELETE method)
     @DeleteMapping("/profile")
-    public ResponseEntity<String> deleteTraineeProfile(
+    public ResponseEntity<Void> deleteTraineeProfile(
             @RequestParam String username) {
-        int id = traineeService.getTraineeByUsername(username, "").get().getId();
-        traineeService.delete(id, username, "");
+        int id = traineeService.getTraineeByUsername(username).get().getId();
+        traineeService.delete(id);
 
-        return ResponseEntity.ok("Trainee profile deleted successfully");
+        return ResponseEntity.ok().build();
     }
 
     // 10. Get not assigned on trainee active trainers. (GET method)
@@ -111,10 +111,10 @@ public class TraineeRestController {
 
     //15. Activate/De-Activate Trainee (PATCH method)
     @PatchMapping("/change-status")
-    private ResponseEntity<String> changeStatus(
+    private ResponseEntity<Void> changeStatus(
             @RequestParam String username,
             @RequestParam Boolean status) {
         traineeService.changeStatus(username, status);
-        return ResponseEntity.ok("Status changed successfully");
+        return ResponseEntity.ok().build();
     }
 }

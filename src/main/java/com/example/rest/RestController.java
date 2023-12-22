@@ -22,6 +22,9 @@ import java.util.List;
 @RequestMapping("/api")
 public class RestController {
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private TraineeService traineeService;
 
     @Autowired
@@ -63,21 +66,15 @@ public class RestController {
             @RequestParam String username,
             @RequestParam String oldPassword,
             @RequestParam String newPassword) {
-        int id = traineeService.getTraineeByUsername(username, oldPassword).get().getId();
-        try {
-            traineeService.changeTraineePassword(id, newPassword, username, oldPassword);
-        } catch (SecurityException e) {
-            trainerService.changeTrainerPassword(id, newPassword, username, oldPassword);
-        }
+        authenticationService.authenticate(username, oldPassword);
+        userService.changeUserPassword(userService.getByUsername(username).get().getId(), newPassword);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/user-details/{username}")
     public UserDetailsDTO getUserDetails(@PathVariable String username) {
-        // Retrieve UserDetails using UserDetailsService
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        // Convert UserDetails to a DTO if needed
         return UserDetailsDTO.fromUserDetails(userDetails);
     }
 
