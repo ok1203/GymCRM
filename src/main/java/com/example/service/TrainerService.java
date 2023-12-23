@@ -45,7 +45,7 @@ public class TrainerService {
     }
 
     @Transactional(readOnly = true)
-    public List<Trainer> list(String username, String password) {
+    public List<Trainer> list() {
         return repository.findAll();
     }
 
@@ -64,7 +64,7 @@ public class TrainerService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Trainer> get(int id, String username, String password) {
+    public Optional<Trainer> get(int id) {
         return repository.get(id);
     }
 
@@ -92,7 +92,7 @@ public class TrainerService {
     }
 
     @Transactional
-    public void delete(int trainerId, String username, String password) {
+    public void delete(int trainerId) {
         for (Training training : repository.getTrainerTrainings(trainerId)) {
             trainingTypeRepository.delete(training.getTrainingTypeId());
             trainingRepository.delete(training.getId());
@@ -131,7 +131,7 @@ public class TrainerService {
     }
 
     @Transactional
-    public void addTrainingToTrainer(Trainer trainer, Training training, String username, String password) {
+    public void addTrainingToTrainer(Trainer trainer, Training training) {
         training.setTrainerId(trainer.getId());
         trainingRepository.create(training);
     }
@@ -141,23 +141,6 @@ public class TrainerService {
         Trainer trainer = getTrainerByUsername(request.getUsername()).orElseThrow(()-> new RuntimeException("Trainer not found"));
         Integer traineeId = (request.getTraineeName() == null) ? 0 : traineeRepository.getTraineeByUsername(request.getTraineeName()).orElseThrow().getId();
         List<Training> list = repository.getTrainerTrainings(trainer.getId(), request.getFromDate(), request.getToDate(), traineeId);
-//        List<Training> list = repository.getTrainerTrainings(trainer.getId());
-//
-//        if (request.getFromDate() != null)
-//            list = list
-//                    .stream()
-//                    .filter(training -> training.getDate().after(request.getFromDate()))
-//                    .collect(Collectors.toList());
-//        if (request.getToDate() != null)
-//            list = list
-//                    .stream()
-//                    .filter(training -> training.getDate().before(request.getToDate()))
-//                    .collect(Collectors.toList());
-//        if (request.getTraineeName() != null)
-//            list = list
-//                    .stream()
-//                    .filter(training -> training.getTrainee().getGym_user().getUserName().equals(request.getTraineeName()))
-//                    .collect(Collectors.toList());
 
         List<TrainingResponse> responseList = new ArrayList<>();
         for (Training training: list) {

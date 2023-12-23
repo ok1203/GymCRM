@@ -11,8 +11,10 @@ import com.example.repo.TrainingTypeRepository;
 import com.example.rest.request.ActionType;
 import com.example.rest.request.TrainingRequest;
 import com.example.rest.request.TrainingSecondaryRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
@@ -31,10 +33,16 @@ public class TrainingService {
     private TrainerRepository trainerRepository;
     private TraineeRepository traineeRepository;
     private TrainingTypeRepository trainingTypeRepository;
-    private String workloadUrl = "http://desktop-h8sautm:9090" + "/trainer/workload";
+    @Autowired
+    private JmsTemplate jmsTemplate;
 
-    @LoadBalanced
-    RestClient restClient = RestClient.create();
+    private String WORKLOAD_QUEUE = "workload.queue";
+
+    private Logger log = LoggerFactory.getLogger(TrainingService.class);
+
+//    private String workloadUrl = "http://desktop-h8sautm:9090" + "/trainer/workload";
+//
+//    RestClient restClient = RestClient.create();
 
     @Autowired
     public TrainingService(TrainingRepository trainingRepository,
@@ -69,15 +77,18 @@ public class TrainingService {
         }
         training.setTrainingTypeId(trainingTypeRepository.getByName(request.getTrainingName()).get().getId());
 
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        String jwt = requestAttributes.getRequest().getHeader("Authorization");
         TrainingSecondaryRequest secondaryRequest = createSecondaryRequest(request, ActionType.ADD);
-        restClient.post()
-                .uri(workloadUrl)
-                .header("Authorization", jwt)
-                .contentType(APPLICATION_JSON)
-                .body(secondaryRequest)
-                .retrieve();
+
+        jmsTemplate.convertAndSend( WORKLOAD_QUEUE, secondaryRequest);
+        log.info("Message sent to queue: " + WORKLOAD_QUEUE);
+//        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+//        String jwt = requestAttributes.getRequest().getHeader("Authorization");
+//        restClient.post()
+//                .uri(workloadUrl)
+//                .header("Authorization", jwt)
+//                .contentType(APPLICATION_JSON)
+//                .body(secondaryRequest)
+//                .retrieve();
 
         return repository.create(training);
     }
@@ -96,15 +107,18 @@ public class TrainingService {
         secondaryRequest.setTrainingDuration(training.getDuration());
         secondaryRequest.setActionType(ActionType.DELETE);
 
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        String jwt = requestAttributes.getRequest().getHeader("Authorization");
+        jmsTemplate.convertAndSend( WORKLOAD_QUEUE, secondaryRequest);
+        log.info("Message sent to queue: " + WORKLOAD_QUEUE);
 
-        restClient.post()
-                .uri(workloadUrl)
-                .header("Authorization", jwt)
-                .contentType(APPLICATION_JSON)
-                .body(secondaryRequest)
-                .retrieve();
+//        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+//        String jwt = requestAttributes.getRequest().getHeader("Authorization");
+//
+//        restClient.post()
+//                .uri(workloadUrl)
+//                .header("Authorization", jwt)
+//                .contentType(APPLICATION_JSON)
+//                .body(secondaryRequest)
+//                .retrieve();
         repository.delete(id);
     }
 

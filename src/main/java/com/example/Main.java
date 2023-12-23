@@ -1,29 +1,16 @@
 package com.example;
 
-import com.example.entity.Trainee;
-import com.example.entity.Trainer;
-import com.example.entity.Training;
-import com.example.entity.User;
 import com.example.service.TraineeService;
 import com.example.service.TrainerService;
 import com.example.service.TrainingService;
 import com.example.service.UserService;
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import java.io.IOException;
-import java.util.Date;
 
 @SpringBootApplication
-@EnableDiscoveryClient
 public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
@@ -37,8 +24,8 @@ public class Main {
         TrainingService service3 = applicationContext.getBean(TrainingService.class);
 
         log.info(service.list().toString());
-        log.info(service1.list("John.Johnson2", "11111111").toString());
-        log.info(service2.list("John.Johnson2", "11111111").toString());
+        log.info(service1.list().toString());
+        log.info(service2.list().toString());
 
         String username = "John.Johnson2", password = "11111111";
 

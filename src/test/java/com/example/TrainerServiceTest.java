@@ -33,7 +33,7 @@ public class TrainerServiceTest {
         trainer.setId(expectedId);
 
         when(repository.get(expectedId)).thenReturn(Optional.of(trainer));
-        int actualId = service.get(expectedId, "username", "password").get().getId();
+        int actualId = service.get(expectedId).get().getId();
 
         assertEquals(expectedId, actualId);
     }
@@ -45,7 +45,7 @@ public class TrainerServiceTest {
         trainer.setSpecializationId(expectedSpecializationId);
 
         when(repository.get(1)).thenReturn(Optional.of(trainer));
-        int actualSpecializationId = service.get(1, "username", "password").get().getSpecializationId();
+        int actualSpecializationId = service.get(1).get().getSpecializationId();
 
         assertEquals(expectedSpecializationId, actualSpecializationId);
     }
@@ -57,7 +57,7 @@ public class TrainerServiceTest {
         trainer.setUserId(expectedUserId);
 
         when(repository.get(1)).thenReturn(Optional.of(trainer));
-        int actualUserId = service.get(1, "username", "password").get().getUserId();
+        int actualUserId = service.get(1).get().getUserId();
 
         assertEquals(expectedUserId, actualUserId);
     }
@@ -82,7 +82,7 @@ public class TrainerServiceTest {
         String username = "username";
         String password = "password";
 
-        service.delete(trainerId, username, password);
+        service.delete(trainerId);
 
         verify(repository).delete(trainerId);
     }

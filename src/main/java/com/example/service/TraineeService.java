@@ -49,7 +49,7 @@ public class TraineeService {
     }
 
     @Transactional(readOnly = true)
-    public List<Trainee> list(String username, String password) {
+    public List<Trainee> list() {
         return repository.findAll();
     }
 
@@ -129,7 +129,7 @@ public class TraineeService {
     }
 
     @Transactional
-    public void deleteTraineeByUsername(String username, String password) {
+    public void deleteTraineeByUsername(String username) {
         int id = repository.getTraineeByUsername(username).get().getId();
         for (Training training : repository.getTraineeTrainings(id)) {
             trainingTypeRepository.delete(training.getTrainingTypeId());

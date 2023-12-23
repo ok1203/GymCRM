@@ -1,7 +1,5 @@
 package com.example.rest.request;
 
-import jakarta.validation.constraints.NotNull;
-
 import java.util.Date;
 
 public class TrainingSecondaryRequest {
