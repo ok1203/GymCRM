@@ -2,8 +2,6 @@ spring:
   config:
     activate:
       on-profile: local
-  server:
-    port: 8080
   datasource:
     url: jdbc:postgresql://localhost:5432/gym
     username: postgres
