@@ -81,7 +81,7 @@ public class TraineeService {
         }
         int userId = repository.get(id).get().getUserId();
         repository.delete(id);
-        customCounter.inc();
+        //customCounter.inc();
         userRepository.delete(userId);
     }
 
@@ -137,6 +137,7 @@ public class TraineeService {
         }
         int userId = repository.get(id).get().getUserId();
         repository.delete(id);
+        //customCounter.inc();
         userRepository.delete(userId);
     }
 

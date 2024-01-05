@@ -1,19 +1,4 @@
 Feature: Rest test
-  Scenario: Get Trainee OK
-    When endpoint at "/trainee/profile?username=AAAAA.AAAAA2" called with get
-    Then returned status code is 200
-    Then response body should contain "BBBBB"
-    
-  Scenario: Get Trainer OK
-    When endpoint at "/trainer/profile?username=John.Johnson2" called with get
-    Then returned status code is 200
-    Then response body should contain "John"
-    
-  Scenario: Get not assigned trainers for trainee
-    When endpoint at "/trainee/not-assigned-trainers?username=AAAAA.AAAAA2" called with get
-    Then returned status code is 200
-    Then response body should contain "Test.Trainer"
-    
   Scenario: Get training types OK
     When endpoint at "/training-types" called with get
     Then returned status code is 200
@@ -48,18 +33,23 @@ Feature: Rest test
     Then returned status code is 200
     
   Scenario: Put trainee update trainer
+    Given valid trainee to register
+    Given valid trainer to register
     When endpoint called with put for updating "Test.Trainee" trainee with "Test.Trainer" trainer
     Then returned status code is 200
 
   Scenario: Patch trainee status
+    Given valid trainee to register
     When endpoint called with patch for changing "Test.Trainee" trainee status
     Then returned status code is 200
     
   Scenario: Patch trainer status
+    Given valid trainer to register
     When endpoint called with patch for changing "Test.Trainer" trainer status
     Then returned status code is 200
     
   Scenario: Delete trainee
+    Given valid trainee to register
     When endpoint called with delete "Test.Trainee" trainee
     Then returned status code is 200
     

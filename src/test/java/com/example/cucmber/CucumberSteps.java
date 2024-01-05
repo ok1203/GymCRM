@@ -1,26 +1,19 @@
 package com.example.cucmber;
 
 import com.example.rest.request.*;
-import com.example.service.security.JwtService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -34,18 +27,44 @@ public class CucumberSteps {
 
     private RestClient client = RestClient.create();
 
-
-    private String token = client.get()
-            .uri("http://localhost:" + port + "/api/login?username=Jeremy.Dell5&password=WwnrlcSUAr")
-            .retrieve()
-            .toEntity(String.class)
-            .getBody();
+    private String token;
 
     private TraineeRegistrationRequest traineeRegistrationRequest;
     private TrainerRegistrationRequest trainerRegistrationRequest;
     private TraineeUpdateRequest traineeUpdateRequest;
     private TrainerUpdateRequest trainerUpdateRequest;
     private TrainingRequest trainingRequest;
+
+    @Before
+    public void createToken() throws JsonProcessingException {
+        traineeRegistrationRequest = new TraineeRegistrationRequest();
+        traineeRegistrationRequest.setFirstName("Token");
+        traineeRegistrationRequest.setLastName("Holder");
+        traineeRegistrationRequest.setAddress("Test st. Test");
+        traineeRegistrationRequest.setDateOfBirth(new Date());
+        ResponseEntity<String> holderResponse = client.post()
+                .uri("http://localhost:" + port + "/api/trainee/registration")
+                .body(traineeRegistrationRequest)
+                .contentType(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toEntity(String.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(holderResponse.getBody());
+        token = client.get()
+                .uri("http://localhost:" + port + "/api/login?username=" + jsonNode.get("Username").asText()
+                        + "&password=" + jsonNode.get("Password").asText())
+                .retrieve()
+                .toEntity(String.class)
+                .getBody();
+    }
+
+    @After
+    public void deleteToken() {
+        client.delete()
+                .uri("http://localhost:" + port + "/api/trainee/profile?username=Token.Holder")
+                .header("Authorization", "Bearer " + token)
+                .retrieve();
+    }
 
     @Given("valid trainee to register")
     public void givenTrainee() {
@@ -66,6 +85,11 @@ public class CucumberSteps {
 
     @Given("valid trainee to update")
     public void givenUpdateTrainee() {
+        traineeRegistrationRequest = new TraineeRegistrationRequest();
+        traineeRegistrationRequest.setFirstName("Test");
+        traineeRegistrationRequest.setLastName("Trainee");
+        traineeRegistrationRequest.setAddress("Test st. Test");
+        traineeRegistrationRequest.setDateOfBirth(new Date());
         traineeUpdateRequest = new TraineeUpdateRequest();
         traineeUpdateRequest.setFirstName("Update");
         traineeUpdateRequest.setLastName("Test");
@@ -77,6 +101,10 @@ public class CucumberSteps {
 
     @Given("valid trainer to update")
     public void givenUpdateTrainer() {
+        trainerRegistrationRequest = new TrainerRegistrationRequest();
+        trainerRegistrationRequest.setFirstName("Test");
+        trainerRegistrationRequest.setLastName("Trainer");
+        trainerRegistrationRequest.setSpecializationId(1);
         trainerUpdateRequest = new TrainerUpdateRequest();
         trainerUpdateRequest.setFirstName("Update");
         trainerUpdateRequest.setLastName("Test");
@@ -112,11 +140,20 @@ public class CucumberSteps {
 
     @Given("invalid trainee to update")
     public void invalidTraineeToUpdate() {
+        traineeRegistrationRequest = new TraineeRegistrationRequest();
+        traineeRegistrationRequest.setFirstName("Test");
+        traineeRegistrationRequest.setLastName("Trainee");
+        traineeRegistrationRequest.setAddress("Test st. Test");
+        traineeRegistrationRequest.setDateOfBirth(new Date());
         traineeUpdateRequest = new TraineeUpdateRequest();
     }
 
     @Given("invalid trainer to update")
     public void invalidTrainerToUpdate() {
+        trainerRegistrationRequest = new TrainerRegistrationRequest();
+        trainerRegistrationRequest.setFirstName("Test");
+        trainerRegistrationRequest.setLastName("Trainer");
+        trainerRegistrationRequest.setSpecializationId(1);
         trainerUpdateRequest = new TrainerUpdateRequest();
     }
 
@@ -148,6 +185,10 @@ public class CucumberSteps {
                     .contentType(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .toEntity(String.class);
+            client.delete()
+                    .uri("http://localhost:" + port + "/api/trainee/profile?username=Test.Trainee")
+                    .header("Authorization", "Bearer " + token)
+                    .retrieve();
         } catch (HttpClientErrorException.BadRequest e) {
             response = ResponseEntity.status(500).build();
         }
@@ -186,6 +227,12 @@ public class CucumberSteps {
     @When("endpoint called with put with trainee updating request")
     public void endpointPutTrainee() {
         try {
+            client.post()
+                    .uri("http://localhost:" + port + "/api/trainee/registration")
+                    .header("Authorization", "Bearer " + token)
+                    .body(traineeRegistrationRequest)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .retrieve();
             response = client.put()
                     .uri("http://localhost:" + port + "/api/trainee/profile")
                     .header("Authorization", "Bearer " + token)
@@ -193,6 +240,10 @@ public class CucumberSteps {
                     .contentType(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .toEntity(String.class);
+            client.delete()
+                    .uri("http://localhost:" + port + "/api/trainee/profile?username=Test.Trainee")
+                    .header("Authorization", "Bearer " + token)
+                    .retrieve();
         } catch (HttpClientErrorException.BadRequest e) {
             response = ResponseEntity.status(500).build();
         }
@@ -201,6 +252,12 @@ public class CucumberSteps {
     @When("endpoint called with put with trainer updating request")
     public void endpointPutTrainer() {
         try {
+            client.post()
+                    .uri("http://localhost:" + port + "/api/trainer/registration")
+                    .header("Authorization", "Bearer " + token)
+                    .body(trainerRegistrationRequest)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .retrieve();
             response = client.put()
                     .uri("http://localhost:" + port + "/api/trainer/profile")
                     .header("Authorization", "Bearer " + token)
@@ -216,6 +273,18 @@ public class CucumberSteps {
     @When("endpoint called with put for updating {string} trainee with {string} trainer")
     public void endpointTraineeTrainerUpdate(String username, String trainer) {
         try {
+            client.post()
+                    .uri("http://localhost:" + port + "/api/trainee/registration")
+                    .header("Authorization", "Bearer " + token)
+                    .body(traineeRegistrationRequest)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .retrieve();
+            client.post()
+                    .uri("http://localhost:" + port + "/api/trainer/registration")
+                    .header("Authorization", "Bearer " + token)
+                    .body(trainerRegistrationRequest)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .retrieve();
             response = client.put()
                     .uri("http://localhost:" + port + "/api/trainee/update-trainers?username=" + username)
                     .header("Authorization", "Bearer " + token)
@@ -223,6 +292,10 @@ public class CucumberSteps {
                     .contentType(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .toEntity(String.class);
+            client.delete()
+                    .uri("http://localhost:" + port + "/api/trainee/profile?username=Test.Trainee")
+                    .header("Authorization", "Bearer " + token)
+                    .retrieve();
         } catch (HttpClientErrorException.BadRequest e) {
             response = ResponseEntity.status(500).build();
         }
@@ -231,11 +304,21 @@ public class CucumberSteps {
     @When("endpoint called with patch for changing {string} trainee status")
     public void endpointChangeStatusTrainee(String username) {
         try {
+            client.post()
+                    .uri("http://localhost:" + port + "/api/trainee/registration")
+                    .header("Authorization", "Bearer " + token)
+                    .body(traineeRegistrationRequest)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .retrieve();
             response = client.patch()
                     .uri("http://localhost:" + port + "/api/trainee/change-status?username=" + username + "&status=false")
                     .header("Authorization", "Bearer " + token)
                     .retrieve()
                     .toEntity(String.class);
+            client.delete()
+                    .uri("http://localhost:" + port + "/api/trainee/profile?username=Test.Trainee")
+                    .header("Authorization", "Bearer " + token)
+                    .retrieve();
         } catch (HttpClientErrorException.BadRequest e) {
             response = ResponseEntity.status(500).build();
         }
@@ -244,6 +327,12 @@ public class CucumberSteps {
     @When("endpoint called with patch for changing {string} trainer status")
     public void endpointChangeStatusTrainer(String username) {
         try {
+            client.post()
+                    .uri("http://localhost:" + port + "/api/trainer/registration")
+                    .header("Authorization", "Bearer " + token)
+                    .body(trainerRegistrationRequest)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .retrieve();
             response = client.patch()
                     .uri("http://localhost:" + port + "/api/trainer/change-status?username=" + username + "&status=false")
                     .header("Authorization", "Bearer " + token)
@@ -257,6 +346,12 @@ public class CucumberSteps {
     @When("endpoint called with delete {string} trainee")
     public void endpointDeleteTrainee(String username) {
         try {
+            client.post()
+                    .uri("http://localhost:" + port + "/api/trainee/registration")
+                    .header("Authorization", "Bearer " + token)
+                    .body(traineeRegistrationRequest)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .retrieve();
             response = client.delete()
                     .uri("http://localhost:" + port + "/api/trainee/profile?username=" + username)
                     .header("Authorization", "Bearer " + token)

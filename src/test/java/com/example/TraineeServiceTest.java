@@ -3,14 +3,15 @@ package com.example;
 import com.example.entity.Trainee;
 import com.example.entity.Training;
 import com.example.repo.TraineeRepository;
+import com.example.repo.UserRepository;
 import com.example.service.TraineeService;
+import io.prometheus.client.Counter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,6 +23,10 @@ public class TraineeServiceTest {
 
     @Mock
     private TraineeRepository repository;
+
+    @Mock
+    private UserRepository userRepository;
+
 
     @InjectMocks
     private TraineeService service;
@@ -94,6 +99,10 @@ public class TraineeServiceTest {
         String username = "username";
         String password = "password";
 
+        Trainee expectedTrainee = new Trainee();
+        expectedTrainee.setId(1);
+
+        when(repository.get(1)).thenReturn(Optional.of(expectedTrainee));
         service.delete(traineeId);
 
         verify(repository).delete(traineeId);
