@@ -41,7 +41,8 @@ public class TrainingTypeRepository {
         CriteriaQuery<TrainingType> criteriaQuery = criteriaBuilder.createQuery(TrainingType.class);
         Root<TrainingType> root = criteriaQuery.from(TrainingType.class);
         criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("typeName"), name));
-        TrainingType trainingType = entityManager.createQuery(criteriaQuery).getSingleResult();
+        List<TrainingType> resultList = entityManager.createQuery(criteriaQuery).getResultList();
+        TrainingType trainingType = resultList.isEmpty() ? null : resultList.get(0);
         return Optional.ofNullable(trainingType);
     }
 

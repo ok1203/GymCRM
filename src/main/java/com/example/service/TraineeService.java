@@ -1,6 +1,5 @@
 package com.example.service;
 
-import com.example.Main;
 import com.example.entity.*;
 import com.example.exceptions.UnupdatableException;
 import com.example.repo.*;
@@ -9,14 +8,11 @@ import com.example.rest.request.TraineeUpdateRequest;
 import com.example.rest.request.TrainingGetRequest;
 import com.example.rest.response.TrainingResponse;
 import io.prometheus.client.Counter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class TraineeService {

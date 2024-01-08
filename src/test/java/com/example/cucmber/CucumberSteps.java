@@ -9,6 +9,7 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
@@ -28,6 +29,9 @@ public class CucumberSteps {
     private RestClient client = RestClient.create();
 
     private String token;
+
+    @Autowired
+    private SampleDataService sampleDataService;
 
     private TraineeRegistrationRequest traineeRegistrationRequest;
     private TrainerRegistrationRequest trainerRegistrationRequest;
@@ -68,59 +72,38 @@ public class CucumberSteps {
 
     @Given("valid trainee to register")
     public void givenTrainee() {
-        traineeRegistrationRequest = new TraineeRegistrationRequest();
-        traineeRegistrationRequest.setFirstName("Test");
-        traineeRegistrationRequest.setLastName("Trainee");
-        traineeRegistrationRequest.setAddress("Test st. Test");
-        traineeRegistrationRequest.setDateOfBirth(new Date());
+        traineeRegistrationRequest = sampleDataService.getTraineeRegistrationRequest();
     }
 
     @Given("valid trainer to register")
     public void givenTrainer() {
-        trainerRegistrationRequest = new TrainerRegistrationRequest();
-        trainerRegistrationRequest.setFirstName("Test");
-        trainerRegistrationRequest.setLastName("Trainer");
-        trainerRegistrationRequest.setSpecializationId(1);
+        trainerRegistrationRequest = sampleDataService.getTrainerRegistrationRequest();
     }
 
     @Given("valid trainee to update")
     public void givenUpdateTrainee() {
-        traineeRegistrationRequest = new TraineeRegistrationRequest();
-        traineeRegistrationRequest.setFirstName("Test");
-        traineeRegistrationRequest.setLastName("Trainee");
-        traineeRegistrationRequest.setAddress("Test st. Test");
-        traineeRegistrationRequest.setDateOfBirth(new Date());
-        traineeUpdateRequest = new TraineeUpdateRequest();
-        traineeUpdateRequest.setFirstName("Update");
-        traineeUpdateRequest.setLastName("Test");
-        traineeUpdateRequest.setUsername("Test.Trainee");
-        traineeUpdateRequest.setAddress("Update Test st. Test");
-        traineeUpdateRequest.setDateOfBirth(new Date());
-        traineeUpdateRequest.setActive(false);
+        sampleDataService.givenTrainee("Valid-Test", "UpdateTrainee", "test", new Date());
+        traineeUpdateRequest = sampleDataService.getTraineeUpdateRequest();
     }
 
     @Given("valid trainer to update")
     public void givenUpdateTrainer() {
-        trainerRegistrationRequest = new TrainerRegistrationRequest();
-        trainerRegistrationRequest.setFirstName("Test");
-        trainerRegistrationRequest.setLastName("Trainer");
-        trainerRegistrationRequest.setSpecializationId(1);
-        trainerUpdateRequest = new TrainerUpdateRequest();
-        trainerUpdateRequest.setFirstName("Update");
-        trainerUpdateRequest.setLastName("Test");
-        trainerUpdateRequest.setUsername("Test.Trainer");
-        trainerUpdateRequest.setSpecializationId(3);
-        trainerUpdateRequest.setActive(false);
+        sampleDataService.givenTrainer("Valid-Test", "UpdateTrainer", 1);
+        trainerUpdateRequest = sampleDataService.getTrainerUpdateRequest();
     }
 
     @Given("valid training to create")
     public void givenTraining() {
-        trainingRequest = new TrainingRequest();
-        trainingRequest.setTrainingName("Swimming");
-        trainingRequest.setTraineeName("Test.Trainee");
-        trainingRequest.setTrainerName("Test.Trainer");
-        trainingRequest.setDate(new Date());
-        trainingRequest.setDuration(60);
+        sampleDataService.givenTrainee("Valid-Test", "TrainingTrainee", "test", new Date());
+        sampleDataService.givenTrainer("Valid-Test", "TrainingTrainer", 1);
+        trainingRequest = sampleDataService.getTrainingRequest();
+    }
+
+    @Given("valid training type to search")
+    public void validTrainingToSearch() {
+        sampleDataService.givenTrainee("Valid-Test", "TrainingTrainee", "test", new Date());
+        sampleDataService.givenTrainer("Valid-Test", "TrainingTrainer", 1);
+        sampleDataService.givenTraining("Valid-Test.TrainingTrainer", "Valid-Test.TrainingTrainee", new Date(), 60, "Swimming");
     }
 
     @Given("invalid trainee to register")
@@ -140,20 +123,13 @@ public class CucumberSteps {
 
     @Given("invalid trainee to update")
     public void invalidTraineeToUpdate() {
-        traineeRegistrationRequest = new TraineeRegistrationRequest();
-        traineeRegistrationRequest.setFirstName("Test");
-        traineeRegistrationRequest.setLastName("Trainee");
-        traineeRegistrationRequest.setAddress("Test st. Test");
-        traineeRegistrationRequest.setDateOfBirth(new Date());
+        sampleDataService.givenTrainee("Invalid-test", "UpdateTrainee", "test", new Date());
         traineeUpdateRequest = new TraineeUpdateRequest();
     }
 
     @Given("invalid trainer to update")
     public void invalidTrainerToUpdate() {
-        trainerRegistrationRequest = new TrainerRegistrationRequest();
-        trainerRegistrationRequest.setFirstName("Test");
-        trainerRegistrationRequest.setLastName("Trainer");
-        trainerRegistrationRequest.setSpecializationId(1);
+        sampleDataService.givenTrainer("Valid-Test", "UpdateTrainer", 1);
         trainerUpdateRequest = new TrainerUpdateRequest();
     }
 
@@ -185,10 +161,6 @@ public class CucumberSteps {
                     .contentType(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .toEntity(String.class);
-            client.delete()
-                    .uri("http://localhost:" + port + "/api/trainee/profile?username=Test.Trainee")
-                    .header("Authorization", "Bearer " + token)
-                    .retrieve();
         } catch (HttpClientErrorException.BadRequest e) {
             response = ResponseEntity.status(500).build();
         }
@@ -227,12 +199,6 @@ public class CucumberSteps {
     @When("endpoint called with put with trainee updating request")
     public void endpointPutTrainee() {
         try {
-            client.post()
-                    .uri("http://localhost:" + port + "/api/trainee/registration")
-                    .header("Authorization", "Bearer " + token)
-                    .body(traineeRegistrationRequest)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .retrieve();
             response = client.put()
                     .uri("http://localhost:" + port + "/api/trainee/profile")
                     .header("Authorization", "Bearer " + token)
@@ -240,10 +206,6 @@ public class CucumberSteps {
                     .contentType(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .toEntity(String.class);
-            client.delete()
-                    .uri("http://localhost:" + port + "/api/trainee/profile?username=Test.Trainee")
-                    .header("Authorization", "Bearer " + token)
-                    .retrieve();
         } catch (HttpClientErrorException.BadRequest e) {
             response = ResponseEntity.status(500).build();
         }
@@ -252,12 +214,6 @@ public class CucumberSteps {
     @When("endpoint called with put with trainer updating request")
     public void endpointPutTrainer() {
         try {
-            client.post()
-                    .uri("http://localhost:" + port + "/api/trainer/registration")
-                    .header("Authorization", "Bearer " + token)
-                    .body(trainerRegistrationRequest)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .retrieve();
             response = client.put()
                     .uri("http://localhost:" + port + "/api/trainer/profile")
                     .header("Authorization", "Bearer " + token)
@@ -273,18 +229,6 @@ public class CucumberSteps {
     @When("endpoint called with put for updating {string} trainee with {string} trainer")
     public void endpointTraineeTrainerUpdate(String username, String trainer) {
         try {
-            client.post()
-                    .uri("http://localhost:" + port + "/api/trainee/registration")
-                    .header("Authorization", "Bearer " + token)
-                    .body(traineeRegistrationRequest)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .retrieve();
-            client.post()
-                    .uri("http://localhost:" + port + "/api/trainer/registration")
-                    .header("Authorization", "Bearer " + token)
-                    .body(trainerRegistrationRequest)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .retrieve();
             response = client.put()
                     .uri("http://localhost:" + port + "/api/trainee/update-trainers?username=" + username)
                     .header("Authorization", "Bearer " + token)
@@ -292,10 +236,6 @@ public class CucumberSteps {
                     .contentType(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .toEntity(String.class);
-            client.delete()
-                    .uri("http://localhost:" + port + "/api/trainee/profile?username=Test.Trainee")
-                    .header("Authorization", "Bearer " + token)
-                    .retrieve();
         } catch (HttpClientErrorException.BadRequest e) {
             response = ResponseEntity.status(500).build();
         }
@@ -304,21 +244,11 @@ public class CucumberSteps {
     @When("endpoint called with patch for changing {string} trainee status")
     public void endpointChangeStatusTrainee(String username) {
         try {
-            client.post()
-                    .uri("http://localhost:" + port + "/api/trainee/registration")
-                    .header("Authorization", "Bearer " + token)
-                    .body(traineeRegistrationRequest)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .retrieve();
             response = client.patch()
                     .uri("http://localhost:" + port + "/api/trainee/change-status?username=" + username + "&status=false")
                     .header("Authorization", "Bearer " + token)
                     .retrieve()
                     .toEntity(String.class);
-            client.delete()
-                    .uri("http://localhost:" + port + "/api/trainee/profile?username=Test.Trainee")
-                    .header("Authorization", "Bearer " + token)
-                    .retrieve();
         } catch (HttpClientErrorException.BadRequest e) {
             response = ResponseEntity.status(500).build();
         }
@@ -327,12 +257,6 @@ public class CucumberSteps {
     @When("endpoint called with patch for changing {string} trainer status")
     public void endpointChangeStatusTrainer(String username) {
         try {
-            client.post()
-                    .uri("http://localhost:" + port + "/api/trainer/registration")
-                    .header("Authorization", "Bearer " + token)
-                    .body(trainerRegistrationRequest)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .retrieve();
             response = client.patch()
                     .uri("http://localhost:" + port + "/api/trainer/change-status?username=" + username + "&status=false")
                     .header("Authorization", "Bearer " + token)
@@ -346,12 +270,6 @@ public class CucumberSteps {
     @When("endpoint called with delete {string} trainee")
     public void endpointDeleteTrainee(String username) {
         try {
-            client.post()
-                    .uri("http://localhost:" + port + "/api/trainee/registration")
-                    .header("Authorization", "Bearer " + token)
-                    .body(traineeRegistrationRequest)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .retrieve();
             response = client.delete()
                     .uri("http://localhost:" + port + "/api/trainee/profile?username=" + username)
                     .header("Authorization", "Bearer " + token)

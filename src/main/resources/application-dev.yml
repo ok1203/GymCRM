@@ -5,13 +5,13 @@ spring:
   server:
     port: 9000
   datasource:
-    url: jdbc:postgresql://localhost:5432/gym
+    url: jdbc:postgresql://localhost:5432/dev
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

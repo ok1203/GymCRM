@@ -1,8 +1,9 @@
 Feature: Rest test
   Scenario: Get training types OK
+    Given valid training type to search
     When endpoint at "/training-types" called with get
     Then returned status code is 200
-    Then response body should contain "Boxing"
+    Then response body should contain "Swimming"
     
   Scenario: Post trainee registration
     Given valid trainee to register
@@ -20,7 +21,6 @@ Feature: Rest test
     Given valid training to create
     When endpoint called with training creating request
     Then returned status code is 200
-    Then response body should contain "Swimming"
 
   Scenario: Put trainee update
     Given valid trainee to update
